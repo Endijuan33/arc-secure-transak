@@ -4,17 +4,24 @@
 
 By routing all transfers through an isolated, in-memory ephemeral ("burner") wallet, the dApp ensures that user main wallets never interact directly with untrusted destination contracts or protocols.
 
-## 🛡️ How It Works: The Anti-Security & Anti-Drainer Architecture
+## ✨ What's New (Latest Upgrades)
+
+* **Web3 Domain Resolution:** Support for ENS domains (e.g., typing `alice.eth` automatically resolves to the correct hex address).
+* **Dynamic Custom Token Importer:** Easily import, save, and transact with any custom ERC-20 token by pasting its smart contract address.
+* **Advanced Gas Speed Selector:** Choose your transaction priority (Standard, Fast, Instant) to dynamically adjust EIP-1559 gas multipliers.
+* **Address Book with JSON Import/Export:** Save frequent contacts, tag them, and securely backup or restore your address book across devices.
+* **Real-Time Fiat Conversions:** Live USD price estimations for supported tokens directly in the transfer input UI.
+
+## 🛡️ How It Works: The Anti-Drainer Architecture
 
 Standard dApps require users to interact directly with external contracts using their primary wallet, opening windows of vulnerability for malicious scripts to siphon unauthorized assets. Arc Secure Transak mitigates this threat via a strict **10-Step Secure Execution Pipeline**:
 
-
-
 [ Main Wallet ] ──(1. Fund Gas / Transfer Token)──> [ Burner Wallet (In-Memory) ]
-│
-(2. Execute Final Tx)
-▼
-[ Final Recipient ]
+                                                          │
+                                                (2. Execute Final Tx)
+                                                          ▼
+                                                  [ Final Recipient ]
+
 
 ### Technical Workflow Breakdown:
 
@@ -45,3 +52,19 @@ Standard dApps require users to interact directly with external contracts using 
 * **Multi-RPC Failover System:** Automatically cycles through a prioritized list of RPC providers (dRPC, Thirdweb, Blockdaemon, Quicknode) if a timeout or node congestion occurs (`-32011`).
 * **Global Error Boundary:** Protects the React application tree from the "White Screen of Death" (WSOD) via a robust root-level error boundary.
 * **Strict Input Sanitization:** Real-time regex filtering on token amount inputs prevents invalid decimals, alphabet characters, and formatting errors.
+
+## 💻 Quickstart (Local Development)
+For maximum security, running this tool locally is highly recommended over using free web hosts.
+# 1. Clone the repository
+git clone [https://github.com/endijuan33/arc-secure-transak.git](https://github.com/endijuan33/arc-secure-transak.git)
+cd arc-secure-transak
+
+# 2. Install dependencies
+pnpm install
+
+# 3. Configure environment variables
+cp .env.example .env
+# Edit .env and add your Reown Project ID (VITE_REOWN_PROJECT_ID=...)
+
+# 4. Start the development server
+pnpm run dev
