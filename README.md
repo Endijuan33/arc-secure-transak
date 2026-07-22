@@ -55,16 +55,23 @@ Standard dApps require users to interact directly with external contracts using 
 
 ## 💻 Quickstart (Local Development)
 For maximum security, running this tool locally is highly recommended over using free web hosts.
-# 1. Clone the repository
-git clone [https://github.com/endijuan33/arc-secure-transak.git](https://github.com/endijuan33/arc-secure-transak.git)
+1. Clone the repository
+```
+git clone https://github.com/endijuan33/arc-secure-transak.git
 cd arc-secure-transak
-
-# 2. Install dependencies
+```
+ 2. Install dependencies
+```
 pnpm install
-
-# 3. Configure environment variables
+```
+ 3. Configure environment variables
+```
 cp .env.example .env
-# Edit .env and add your Reown Project ID (VITE_REOWN_PROJECT_ID=...)
+```
 
-# 4. Start the development server
+ **Edit .env and add your Reown Project ID (VITE_REOWN_PROJECT_ID=...)**
+
+ 5. Start the development server
+```
 pnpm run dev
+```
