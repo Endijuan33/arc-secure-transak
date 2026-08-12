@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Cancel superseded runs on the same ref so a busy PR does not queue behind
+# itself.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Typecheck, lint, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+
+      # `npm ci` requires the committed package-lock.json and installs the exact
+      # pinned tree, so CI can never resolve a different version than local.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Test
+        run: npm run test:run
+
+      - name: Build
+        run: npx vite build
+        env:
+          # A placeholder is enough: the project ID is only read at runtime when
+          # the wallet modal initialises, never during the build.
+          VITE_REOWN_PROJECT_ID: ci-placeholder-project-id

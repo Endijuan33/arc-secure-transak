@@ -7,6 +7,7 @@ This document outlines the planned technical improvements, architectural expansi
 ## Current Stack Status (Base Version 1.0.0)
 
 Before upgrading, ensure the following baseline is stable:
+
 - React 18 + Vite
 - Reown AppKit (WalletConnect) with ethers v6
 - Multi-RPC failover (5 endpoints)
@@ -22,6 +23,7 @@ Before upgrading, ensure the following baseline is stable:
 ## 🚀 Phase 1: UX & Interface Enhancements
 
 ### 1.1 ENS / Web3 Domain Resolver
+
 - **Objective:** Allow users to input human-readable names (e.g., `alice.arc`, `vitalik.eth`) instead of raw hex addresses.
 - **Implementation Plan:**
   - Add a new utility function `resolveDomain(domain)` in `src/utils/helpers.js` using the provider's `resolveName` method (ethers v6).
@@ -32,6 +34,7 @@ Before upgrading, ensure the following baseline is stable:
 - **Dependencies:** None (ethers already supports ENS resolution via provider).
 
 ### 1.2 Real-Time Fiat Currency Conversion (USD/IDR)
+
 - **Objective:** Display approximate USD/IDR value of the selected token amount.
 - **Implementation Plan:**
   - Create a new hook `useTokenPrice(tokenSymbol)` in `src/hooks/useTokenPrice.js` that fetches price from CoinGecko or a decentralized oracle.
@@ -41,6 +44,7 @@ Before upgrading, ensure the following baseline is stable:
 - **Dependencies:** Need to add a lightweight fetch library (or use native `fetch`). Consider fallback if API is down.
 
 ### 1.3 Advanced Gas Speed Selector
+
 - **Objective:** Let users choose transaction priority (Standard, Fast, Instant) to adjust gas multiplier.
 - **Implementation Plan:**
   - Add a new state `gasSpeed` in `App.jsx` with values: `'standard'`, `'fast'`, `'instant'`.
@@ -55,6 +59,7 @@ Before upgrading, ensure the following baseline is stable:
 ## ⚙️ Phase 2: Functional Expansion
 
 ### 2.1 Dynamic Custom Token Importer
+
 - **Objective:** Allow users to add any ERC-20 token by contract address, removing dependency on hardcoded `KNOWN_TOKENS`.
 - **Implementation Plan:**
   - Create a new component `AddTokenModal` that prompts for token address.
@@ -66,6 +71,7 @@ Before upgrading, ensure the following baseline is stable:
 - **Dependencies:** None.
 
 ### 2.2 Batch / Multi-Send Capability
+
 - **Objective:** Enable users to send tokens to multiple recipients in one workflow.
 - **Implementation Plan:**
   - Add a new mode in UI that allows adding multiple recipient rows.
@@ -77,6 +83,7 @@ Before upgrading, ensure the following baseline is stable:
 - **Complexity:** Medium; requires careful handling of nonce and gas.
 
 ### 2.3 Address Book Cloud Sync / Export
+
 - **Objective:** Prevent data loss and allow cross-device use.
 - **Implementation Plan:**
   - Add "Export" button that downloads a JSON file of the address book.
@@ -90,6 +97,7 @@ Before upgrading, ensure the following baseline is stable:
 ## 🏗️ Phase 3: Architectural & Performance Optimizations
 
 ### 3.1 Latency-Based RPC Ping Race
+
 - **Objective:** Reduce connection lag by picking the fastest RPC on startup.
 - **Implementation Plan:**
   - On app mount (or wallet connect), ping all RPCs in `RPC_URLS` with a simple `eth_blockNumber` request.
@@ -99,6 +107,7 @@ Before upgrading, ensure the following baseline is stable:
 - **Complexity:** Medium.
 
 ### 3.2 Smart Contract Account Abstraction (ERC-4337 Exploration)
+
 - **Objective:** Reduce transaction overhead and gas costs by eliminating the burner wallet funding step using meta-transactions.
 - **Implementation Plan:**
   - This is a major architectural change. Start with research on deploying a simple forwarder contract on Arc Testnet.
@@ -113,12 +122,14 @@ Before upgrading, ensure the following baseline is stable:
 ## 🔧 Supporting Improvements
 
 ### 4.1 Better Error Messaging & Monitoring
+
 - **Objective:** Provide more actionable error messages and optional remote logging.
 - **Implementation Plan:**
   - Extend `parseUserFriendlyError` with more specific messages for common errors.
   - Add an optional "Report Error" button that sends logs to a configured endpoint (disabled by default).
 
 ### 4.2 Unit & Integration Testing
+
 - **Objective:** Ensure reliability with test coverage.
 - **Implementation Plan:**
   - Set up Vitest and React Testing Library.
@@ -129,20 +140,20 @@ Before upgrading, ensure the following baseline is stable:
 
 ## 🔖 Priority Guide
 
-| Priority | Feature | Reason |
-|----------|---------|--------|
-| **P0** | 2.1 Custom Token Importer | Removes hardcoded dependency; user-driven |
-| **P1** | 1.1 ENS Resolver | Improves UX drastically |
-| **P1** | 1.3 Gas Speed Selector | Gives user control over costs |
-| **P2** | 2.3 Address Book Export/Import | Prevents data loss |
-| **P2** | 3.1 RPC Ping Race | Improves perceived performance |
-| **P3** | 1.2 Fiat Conversion | Nice-to-have; depends on external API |
-| **P3** | 2.2 Batch Send | Complex; user demand may justify |
-| **P4** | 3.2 ERC-4337 | Long-term research; game-changer but high effort |
+| Priority | Feature                        | Reason                                           |
+| -------- | ------------------------------ | ------------------------------------------------ |
+| **P0**   | 2.1 Custom Token Importer      | Removes hardcoded dependency; user-driven        |
+| **P1**   | 1.1 ENS Resolver               | Improves UX drastically                          |
+| **P1**   | 1.3 Gas Speed Selector         | Gives user control over costs                    |
+| **P2**   | 2.3 Address Book Export/Import | Prevents data loss                               |
+| **P2**   | 3.1 RPC Ping Race              | Improves perceived performance                   |
+| **P3**   | 1.2 Fiat Conversion            | Nice-to-have; depends on external API            |
+| **P3**   | 2.2 Batch Send                 | Complex; user demand may justify                 |
+| **P4**   | 3.2 ERC-4337                   | Long-term research; game-changer but high effort |
 
 ---
 
-## 🗃️  Directory structure
+## 🗃️ Directory structure
 
 |arc-secure-transak
 ├── README.md
@@ -157,9 +168,9 @@ Before upgrading, ensure the following baseline is stable:
 │   ├── App.jsx
 │   ├── assets
 │   │   └── tokens
-│   │       ├── cirbtc.svg
-│   │       ├── eurc.svg
-│   │       └── usdc.svg
+│   │   ├── cirbtc.svg
+│   │   ├── eurc.svg
+│   │   └── usdc.svg
 │   ├── components
 │   │   ├── AccountInfo.jsx
 │   │   ├── DestinationInput.jsx
@@ -175,9 +186,9 @@ Before upgrading, ensure the following baseline is stable:
 │   ├── index.css
 │   ├── main.jsx
 │   └── utils
-│       ├── helpers.js
-│       ├── secureTransak.js
-│       └── tokenUtils.js
+│   ├── helpers.js
+│   ├── secureTransak.js
+│   └── tokenUtils.js
 └── vite.config.js
 
 9 directories, 26 files
@@ -186,18 +197,18 @@ Before upgrading, ensure the following baseline is stable:
 
 ## 📁 File Impact Summary
 
-| File | Affected Upgrades |
-|------|-------------------|
-| `src/App.jsx` | 1.1, 1.2, 1.3, 2.1, 2.2 |
-| `src/components/DestinationInput.jsx` | 1.1 |
-| `src/utils/helpers.js` | 1.1, 2.3 |
-| `src/utils/secureTransak.js` | 1.3, 2.2, 3.1, 3.2 |
-| `src/hooks/useBalances.js` | 2.1 |
-| `src/config/constants.js` | 2.1 |
-| `src/config/reown.js` | 3.1 |
-| `src/utils/tokenUtils.js` | 2.1 (already has fetchTokenInfo) |
-| `src/hooks/useTokenPrice.js` | 1.2 (new file) |
+| File                                  | Affected Upgrades                |
+| ------------------------------------- | -------------------------------- |
+| `src/App.jsx`                         | 1.1, 1.2, 1.3, 2.1, 2.2          |
+| `src/components/DestinationInput.jsx` | 1.1                              |
+| `src/utils/helpers.js`                | 1.1, 2.3                         |
+| `src/utils/secureTransak.js`          | 1.3, 2.2, 3.1, 3.2               |
+| `src/hooks/useBalances.js`            | 2.1                              |
+| `src/config/constants.js`             | 2.1                              |
+| `src/config/reown.js`                 | 3.1                              |
+| `src/utils/tokenUtils.js`             | 2.1 (already has fetchTokenInfo) |
+| `src/hooks/useTokenPrice.js`          | 1.2 (new file)                   |
 
 ---
 
-*Last updated: July 2026*
+_Last updated: July 2026_
