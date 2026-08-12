@@ -33,7 +33,9 @@ export function Header({
         <img src="/arc-logo.svg" alt="" width={40} height={40} className="app-header__logo" />
         <div style={{ minWidth: 0 }}>
           <h1 className="app-header__title">Arc Secure Transak</h1>
-          <p className="app-header__tagline">Anti-drainer transfers via an ephemeral burner wallet</p>
+          <p className="app-header__tagline">
+            Anti-drainer transfers via an ephemeral burner wallet
+          </p>
         </div>
       </div>
 

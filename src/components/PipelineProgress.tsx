@@ -102,9 +102,7 @@ export function PipelineProgress({ steps, isRunning, chain }: Props): React.JSX.
 
                 {/* Live detail while running; the static explanation otherwise, so
                     the panel is informative before a transfer has been started. */}
-                <p className="timeline__detail">
-                  {step.detail ?? definition.summary}
-                </p>
+                <p className="timeline__detail">{step.detail ?? definition.summary}</p>
               </div>
             </li>
           );

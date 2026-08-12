@@ -39,7 +39,8 @@ export const PIPELINE_DEFINITIONS: readonly StepDefinition[] = [
   {
     id: 'verify-session',
     label: 'Verify wallet session',
-    summary: 'Confirms the connected signer is live and the recipient is a valid, non-blocked address.',
+    summary:
+      'Confirms the connected signer is live and the recipient is a valid, non-blocked address.',
     signature: false,
   },
   {

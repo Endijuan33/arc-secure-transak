@@ -219,9 +219,9 @@ export function TransferPage(): React.JSX.Element {
             <div>
               <strong style={{ display: 'block', marginBottom: 2 }}>Insecure origin</strong>
               <span style={{ fontSize: 13 }}>
-                This page is not served over HTTPS or localhost, so the browser withholds Web Crypto.
-                Burner keys cannot be encrypted and transfers will be refused. Reopen the app on a
-                secure origin.
+                This page is not served over HTTPS or localhost, so the browser withholds Web
+                Crypto. Burner keys cannot be encrypted and transfers will be refused. Reopen the
+                app on a secure origin.
               </span>
             </div>
           </div>
@@ -280,118 +280,114 @@ export function TransferPage(): React.JSX.Element {
           aria-labelledby="tab-transfer"
           hidden={tab !== 'transfer'}
         >
-        <form className="stack" onSubmit={onSubmit}>
-          {wallet.isConnected && (
-            <div className="segmented" role="group" aria-label="Asset type">
-              <button
-                type="button"
-                className={`segmented__option${mode === 'token' ? ' segmented__option--active' : ''}`}
-                onClick={() => setMode('token')}
-                aria-pressed={mode === 'token'}
-              >
-                Tokens
-              </button>
-              <button
-                type="button"
-                className={`segmented__option${mode === 'nft' ? ' segmented__option--active' : ''}`}
-                onClick={() => setMode('nft')}
-                aria-pressed={mode === 'nft'}
-              >
-                {ICONS.nft} NFTs
-              </button>
-            </div>
-          )}
+          <form className="stack" onSubmit={onSubmit}>
+            {wallet.isConnected && (
+              <div className="segmented" role="group" aria-label="Asset type">
+                <button
+                  type="button"
+                  className={`segmented__option${mode === 'token' ? ' segmented__option--active' : ''}`}
+                  onClick={() => setMode('token')}
+                  aria-pressed={mode === 'token'}
+                >
+                  Tokens
+                </button>
+                <button
+                  type="button"
+                  className={`segmented__option${mode === 'nft' ? ' segmented__option--active' : ''}`}
+                  onClick={() => setMode('nft')}
+                  aria-pressed={mode === 'nft'}
+                >
+                  {ICONS.nft} NFTs
+                </button>
+              </div>
+            )}
 
-          {wallet.isConnected && mode === 'token' && (
-            <TokenSelector
-              assets={balances.all}
-              selected={selectedAsset}
-              isLoading={balances.isLoading}
-              onSelect={(asset) => setSelectedAssetKey(assetKeyOf(asset))}
-            />
-          )}
-
-          {wallet.isConnected && mode === 'nft' && (
-            <Suspense fallback={<LoadingBlock />}>
-              <NftSelector
-                nfts={nfts}
-                selected={selectedNft}
-                amount={nftAmount}
-                onSelect={(nft) => setSelectedNftKey(nft === null ? null : nftKeyOf(nft))}
-                onAmountChange={setNftAmount}
+            {wallet.isConnected && mode === 'token' && (
+              <TokenSelector
+                assets={balances.all}
+                selected={selectedAsset}
+                isLoading={balances.isLoading}
+                onSelect={(asset) => setSelectedAssetKey(assetKeyOf(asset))}
               />
-            </Suspense>
-          )}
+            )}
 
-          <DestinationInput
-            recipient={recipient}
-            sender={wallet.address}
-            addressBook={addressBook}
-            onChange={setRecipient}
-            onAddBookmark={(address, tag) => {
-              const outcome = addBookmark(address, tag);
-              if (outcome.ok) {
-                notify.success('Bookmark saved', tag);
-              } else {
-                notify.error('Could not save bookmark', outcome.error ?? '');
-              }
-            }}
-            onRemoveBookmark={(id) => {
-              removeBookmark(id);
-              notify.info('Bookmark removed');
-            }}
-          />
+            {wallet.isConnected && mode === 'nft' && (
+              <Suspense fallback={<LoadingBlock />}>
+                <NftSelector
+                  nfts={nfts}
+                  selected={selectedNft}
+                  amount={nftAmount}
+                  onSelect={(nft) => setSelectedNftKey(nft === null ? null : nftKeyOf(nft))}
+                  onAmountChange={setNftAmount}
+                />
+              </Suspense>
+            )}
 
-          {mode === 'token' && (
-            <AmountInput
-              asset={selectedAsset}
-              amount={amount}
-              chain={chain}
-              gasSpeed={gasSpeed}
-              gas={gas}
-              onAmountChange={setAmount}
-              onGasSpeedChange={setGasSpeed}
-              onMax={() => void handleMax()}
+            <DestinationInput
+              recipient={recipient}
+              sender={wallet.address}
+              addressBook={addressBook}
+              onChange={setRecipient}
+              onAddBookmark={(address, tag) => {
+                const outcome = addBookmark(address, tag);
+                if (outcome.ok) {
+                  notify.success('Bookmark saved', tag);
+                } else {
+                  notify.error('Could not save bookmark', outcome.error ?? '');
+                }
+              }}
+              onRemoveBookmark={(id) => {
+                removeBookmark(id);
+                notify.info('Bookmark removed');
+              }}
             />
-          )}
 
-          {isRunning ? (
-            <button type="button" className="btn btn--danger" onClick={transak.abort}>
-              <span className="spinner">⟳</span> {ICONS.abort} Abort and recover funds
-            </button>
-          ) : (
-            <button type="submit" className="btn btn--primary" disabled={!transak.canSubmit}>
-              🚀 Send securely
-            </button>
-          )}
+            {mode === 'token' && (
+              <AmountInput
+                asset={selectedAsset}
+                amount={amount}
+                chain={chain}
+                gasSpeed={gasSpeed}
+                gas={gas}
+                onAmountChange={setAmount}
+                onGasSpeedChange={setGasSpeed}
+                onMax={() => void handleMax()}
+              />
+            )}
 
-          {transak.blockedReason !== null && !isRunning && (
-            <p className="hint" style={{ margin: 0, textAlign: 'center' }}>
-              {transak.blockedReason}
-            </p>
-          )}
-        </form>
+            {isRunning ? (
+              <button type="button" className="btn btn--danger" onClick={transak.abort}>
+                <span className="spinner">⟳</span> {ICONS.abort} Abort and recover funds
+              </button>
+            ) : (
+              <button type="submit" className="btn btn--primary" disabled={!transak.canSubmit}>
+                🚀 Send securely
+              </button>
+            )}
 
-        <div className="stack" style={{ gap: 'var(--space-4)', marginTop: 'var(--space-6)' }}>
-          <TransactionStatusPanel
-            status={status}
-            message={statusMessage}
-            isRunning={isRunning}
-          />
+            {transak.blockedReason !== null && !isRunning && (
+              <p className="hint" style={{ margin: 0, textAlign: 'center' }}>
+                {transak.blockedReason}
+              </p>
+            )}
+          </form>
 
-          <TransactionReceipt
-            status={status}
-            chain={chain}
-            result={result}
-            amount={receiptAmount}
-            symbol={receiptSymbol}
-            recipient={recipient}
-          />
+          <div className="stack" style={{ gap: 'var(--space-4)', marginTop: 'var(--space-6)' }}>
+            <TransactionStatusPanel status={status} message={statusMessage} isRunning={isRunning} />
 
-          <PipelineProgress steps={steps} isRunning={isRunning} chain={chain} />
+            <TransactionReceipt
+              status={status}
+              chain={chain}
+              result={result}
+              amount={receiptAmount}
+              symbol={receiptSymbol}
+              recipient={recipient}
+            />
 
-          <ActivityLog entries={log} isRunning={isRunning} />
-        </div>
+            <PipelineProgress steps={steps} isRunning={isRunning} chain={chain} />
+
+            <ActivityLog entries={log} isRunning={isRunning} />
+          </div>
         </div>
 
         <Footer chain={chain} />

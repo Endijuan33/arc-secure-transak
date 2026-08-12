@@ -25,7 +25,10 @@ export function AboutPanel({ chain }: Props): React.JSX.Element {
         <h2 className="section-title">What this tool does</h2>
         <p className="prose">
           Arc Secure Transak moves native coins, ERC-20 tokens, and NFTs to a destination{' '}
-          <strong>without your wallet ever signing a transaction addressed to that destination</strong>.
+          <strong>
+            without your wallet ever signing a transaction addressed to that destination
+          </strong>
+          .
         </p>
         <p className="prose">
           A normal transfer to a malicious contract is dangerous because your wallet signs a
@@ -61,15 +64,16 @@ export function AboutPanel({ chain }: Props): React.JSX.Element {
           </li>
           <li>
             <strong>Encrypted at rest in memory.</strong> AES-256-GCM under a non-extractable
-            <code> CryptoKey</code>. Plaintext exists only inside the microseconds of a signing call.
+            <code> CryptoKey</code>. Plaintext exists only inside the microseconds of a signing
+            call.
           </li>
           <li>
             <strong>Overwritten, not just dropped.</strong> Key buffers are filled with random bytes
             then zeros, in a <code>finally</code> block so an exception cannot leak a live buffer.
           </li>
           <li>
-            <strong>Never persisted.</strong> No localStorage, sessionStorage, IndexedDB, cookies, or
-            console output. Closing the tab destroys it.
+            <strong>Never persisted.</strong> No localStorage, sessionStorage, IndexedDB, cookies,
+            or console output. Closing the tab destroys it.
           </li>
           <li>
             <strong>Destroyed only when empty.</strong> The key is wiped after the burner's balance
@@ -104,8 +108,8 @@ export function AboutPanel({ chain }: Props): React.JSX.Element {
       <section className="stack" style={{ gap: 'var(--space-3)' }}>
         <h2 className="section-title">If something goes wrong</h2>
         <p className="prose">
-          Any failure after the burner is funded triggers recovery: the asset is returned first, then
-          the remaining gas. Recovery runs even when you press abort, because honouring the
+          Any failure after the burner is funded triggers recovery: the asset is returned first,
+          then the remaining gas. Recovery runs even when you press abort, because honouring the
           cancellation there would strand the funds.
         </p>
         <p className="prose">
@@ -134,8 +138,8 @@ export function AboutPanel({ chain }: Props): React.JSX.Element {
               run.
             </span>
             <span style={{ fontSize: 13 }}>
-              <strong>A compromised device or browser extension.</strong> Anything that can read this
-              page's memory can read the key while it is decrypted.
+              <strong>A compromised device or browser extension.</strong> Anything that can read
+              this page's memory can read the key while it is decrypted.
             </span>
           </div>
         </div>
@@ -147,8 +151,8 @@ export function AboutPanel({ chain }: Props): React.JSX.Element {
           Routing through a burner costs one additional native transfer of gas versus sending
           directly — the funding transaction, plus the sweep that returns what is unused. A small
           remainder stays in each burner because a node requires the full worst-case fee to be
-          available before it will accept the sweep, and the EIP-1559 refund arrives afterwards.
-          On {chain.name} that remainder is a fraction of a cent.
+          available before it will accept the sweep, and the EIP-1559 refund arrives afterwards. On{' '}
+          {chain.name} that remainder is a fraction of a cent.
         </p>
       </section>
 

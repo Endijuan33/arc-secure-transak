@@ -26,11 +26,7 @@ const PRESENTATION: Record<
  * all three, which meant the one thing a user checks at a glance — what is
  * happening right now — competed with a wall of debug text.
  */
-export function TransactionStatusPanel({
-  status,
-  message,
-  isRunning,
-}: Props): React.JSX.Element {
+export function TransactionStatusPanel({ status, message, isRunning }: Props): React.JSX.Element {
   const presentation = PRESENTATION[status];
 
   return (
