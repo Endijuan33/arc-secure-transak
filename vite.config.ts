@@ -13,6 +13,8 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
+    strictPort: true,
+    allowedHosts: ['i8c3jqlkeo4eiwmgmnhzq.preview.studio.arc.io', 'localhost'],
     watch: {
       usePolling: true,
       interval: 1000,

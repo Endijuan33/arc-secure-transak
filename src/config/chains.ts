@@ -51,6 +51,39 @@ const ARC_TESTNET: ChainConfig = {
   supportsEip1559: true,
 };
 
+const ARC_MAINNET: ChainConfig = {
+  id: 5042,
+  name: 'Arc',
+  network: 'arc',
+  testnet: false,
+  nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
+  rpcEndpoints: [
+    { url: 'https://rpc.mainnet.arc.io', label: 'Arc Public' },
+    { url: 'https://rpc.blockdaemon.mainnet.arc.io', label: 'Blockdaemon' },
+    { url: 'https://rpc.drpc.mainnet.arc.io', label: 'dRPC' },
+    { url: 'https://rpc.quicknode.mainnet.arc.io', label: 'QuickNode' },
+  ],
+  explorer: {
+    name: 'Arc Explorer',
+    url: 'https://explorer.arc.io',
+    apiBase: 'https://explorer.arc.io/api/v2',
+  },
+  knownTokens: [
+    {
+      address: '0xbEf5f6d51CB62b58e6A8f77868681825C6fe21c1',
+      symbol: 'EURC',
+      name: 'Euro Coin',
+      decimals: 6,
+      logo: eurcLogo,
+    },
+    // cirBTC mainnet address — add once officially published at
+    // https://docs.arc.io/arc/references/contract-addresses
+  ],
+  fallbackGasPriceWei: 20_000_000_000n, // 20 gwei (Arc mainnet floor)
+  gasSafetyBufferWei: 5_000_000_000_000_000n, // 0.005 native
+  supportsEip1559: true,
+};
+
 /**
  * Every chain the app can talk to.
  *
@@ -58,7 +91,7 @@ const ARC_TESTNET: ChainConfig = {
  * UI, is registered with Reown AppKit, and is picked up by the RPC pool, gas
  * estimator, history store, and explorer links automatically.
  */
-export const SUPPORTED_CHAINS: readonly ChainConfig[] = [ARC_TESTNET];
+export const SUPPORTED_CHAINS: readonly ChainConfig[] = [ARC_TESTNET, ARC_MAINNET];
 
 /** The chain selected on first load. */
 export const DEFAULT_CHAIN: ChainConfig = ARC_TESTNET;
