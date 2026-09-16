@@ -33,7 +33,11 @@ export function Footer({ chain }: Props): React.JSX.Element {
         </span>
         <span className="app-footer__fact">
           <strong>
-            <ShieldCheck size={8} aria-hidden="true" style={{ display: 'inline', marginRight: 4 }} />
+            <ShieldCheck
+              size={8}
+              aria-hidden="true"
+              style={{ display: 'inline', marginRight: 4 }}
+            />
             Approvals
           </strong>
           At most two per transfer, both to addresses this app controls — never to the recipient

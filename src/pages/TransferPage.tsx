@@ -191,12 +191,21 @@ export function TransferPage(): React.JSX.Element {
         />
 
         {!isSecureContext && (
-          <div
-            className="callout callout--error"
-            style={{ marginBottom: 'var(--space-5)' }}
-          >
+          <div className="callout callout--error" style={{ marginBottom: 'var(--space-5)' }}>
             <span className="callout__icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                aria-hidden="true"
+              >
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                <path d="M12 9v4" />
+                <path d="M12 17h.01" />
+              </svg>
             </span>
             <div>
               <strong style={{ display: 'block', marginBottom: 2 }}>Insecure origin</strong>
@@ -371,15 +380,8 @@ export function TransferPage(): React.JSX.Element {
           </form>
 
           {/* Post-submit panels */}
-          <div
-            className="stack"
-            style={{ gap: 'var(--space-4)', marginTop: 'var(--space-6)' }}
-          >
-            <TransactionStatusPanel
-              status={status}
-              message={statusMessage}
-              isRunning={isRunning}
-            />
+          <div className="stack" style={{ gap: 'var(--space-4)', marginTop: 'var(--space-6)' }}>
+            <TransactionStatusPanel status={status} message={statusMessage} isRunning={isRunning} />
 
             <TransactionReceipt
               status={status}

@@ -43,10 +43,14 @@ export function PipelineProgress({ steps, isRunning, chain }: Props): React.JSX.
       aria-busy={isRunning}
     >
       <div className="row-between" style={{ flexWrap: 'wrap', rowGap: 'var(--space-1)' }}>
-        <span className="label" style={{ marginBottom: 0 }}>Secure pipeline</span>
+        <span className="label" style={{ marginBottom: 0 }}>
+          Secure pipeline
+        </span>
         <span className="hint">
           {hasActivity ? (
-            <>{progress}% — {active !== null ? active.label : 'settled'}</>
+            <>
+              {progress}% — {active !== null ? active.label : 'settled'}
+            </>
           ) : (
             <>10 stages &middot; 2 wallet approvals</>
           )}
@@ -89,9 +93,7 @@ export function PipelineProgress({ steps, isRunning, chain }: Props): React.JSX.
                       signature
                     </span>
                   )}
-                  {elapsed !== null && (
-                    <span className="timeline__duration">{elapsed}</span>
-                  )}
+                  {elapsed !== null && <span className="timeline__duration">{elapsed}</span>}
                 </div>
                 <p className="timeline__detail">{step.detail ?? definition.summary}</p>
               </div>

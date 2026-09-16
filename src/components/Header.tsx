@@ -30,7 +30,13 @@ export function Header({
   return (
     <header className="app-header">
       <div className="app-header__brand">
-        <img src="/arc-logo.svg" alt="Arc Secure Transak" width={38} height={38} className="app-header__logo" />
+        <img
+          src="/arc-logo.svg"
+          alt="Arc Secure Transak"
+          width={38}
+          height={38}
+          className="app-header__logo"
+        />
         <div style={{ minWidth: 0 }}>
           <h1 className="app-header__title display">Arc Secure Transak</h1>
           <p className="app-header__tagline">
@@ -50,18 +56,16 @@ export function Header({
           }
           style={{ gap: 4 }}
         >
-          <Shield
-            size={10}
-            aria-hidden="true"
-            style={{ strokeWidth: 2.5 }}
-          />
+          <Shield size={10} aria-hidden="true" style={{ strokeWidth: 2.5 }} />
           {isSecureContext ? 'secure' : 'insecure'}
         </span>
 
         {/* Chain selector */}
         {SUPPORTED_CHAINS.length > 1 && (
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-            <label className="sr-only" htmlFor="chain-select">Network</label>
+            <label className="sr-only" htmlFor="chain-select">
+              Network
+            </label>
             <select
               id="chain-select"
               className="input input--compact"
@@ -96,9 +100,11 @@ export function Header({
           aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
           title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
         >
-          {theme === 'dark'
-            ? <Sun size={15} aria-hidden="true" />
-            : <Moon size={15} aria-hidden="true" />}
+          {theme === 'dark' ? (
+            <Sun size={15} aria-hidden="true" />
+          ) : (
+            <Moon size={15} aria-hidden="true" />
+          )}
         </button>
 
         {/* Wallet button */}
@@ -109,9 +115,7 @@ export function Header({
           style={{ gap: 6 }}
         >
           <Wallet size={13} aria-hidden="true" style={{ flexShrink: 0 }} />
-          {isConnected && address !== null
-            ? shortAddress(address)
-            : 'Connect wallet'}
+          {isConnected && address !== null ? shortAddress(address) : 'Connect wallet'}
         </button>
       </div>
     </header>

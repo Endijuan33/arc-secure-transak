@@ -35,9 +35,11 @@ export function TransactionReceipt({
     >
       <header className="receipt__head">
         <span className="receipt__icon">
-          {settled
-            ? <CheckCircle size={18} aria-hidden="true" />
-            : <AlertTriangle size={18} aria-hidden="true" />}
+          {settled ? (
+            <CheckCircle size={18} aria-hidden="true" />
+          ) : (
+            <AlertTriangle size={18} aria-hidden="true" />
+          )}
         </span>
         <div style={{ minWidth: 0 }}>
           <strong className="receipt__title">
@@ -68,20 +70,14 @@ export function TransactionReceipt({
 
         <div className="receipt__cell">
           <dt>Block</dt>
-          <dd
-            className="mono"
-            style={{ fontVariantNumeric: 'tabular-nums' }}
-          >
+          <dd className="mono" style={{ fontVariantNumeric: 'tabular-nums' }}>
             {result.blockNumber ?? '—'}
           </dd>
         </div>
 
         <div className="receipt__cell">
           <dt>Gas used</dt>
-          <dd
-            className="mono"
-            style={{ fontVariantNumeric: 'tabular-nums' }}
-          >
+          <dd className="mono" style={{ fontVariantNumeric: 'tabular-nums' }}>
             {result.gasUsed?.toLocaleString() ?? '—'}
           </dd>
         </div>

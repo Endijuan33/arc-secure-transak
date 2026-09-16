@@ -39,8 +39,7 @@ export function AccountInfo({
         >
           <Network size={13} aria-hidden="true" style={{ flexShrink: 0 }} />
           <span>
-            Network{' '}
-            <strong style={{ color: 'var(--ink)', fontWeight: 600 }}>{chain.name}</strong>
+            Network <strong style={{ color: 'var(--ink)', fontWeight: 600 }}>{chain.name}</strong>
             {chain.testnet && (
               <span
                 style={{
@@ -70,7 +69,16 @@ export function AccountInfo({
           <span>
             Balance{' '}
             {isLoading && native === null ? (
-              <span className="skeleton" style={{ display: 'inline-block', width: 88, height: 14, verticalAlign: 'middle', borderRadius: 4 }} />
+              <span
+                className="skeleton"
+                style={{
+                  display: 'inline-block',
+                  width: 88,
+                  height: 14,
+                  verticalAlign: 'middle',
+                  borderRadius: 4,
+                }}
+              />
             ) : (
               <strong
                 style={{

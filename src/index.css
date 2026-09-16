@@ -51,14 +51,14 @@
   --bg: #0d1b2f;
   --bg-gradient: linear-gradient(180deg, #0b1623 0%, #0d1b2f 55%, #101e35 100%);
   --surface: rgba(255, 255, 255, 0.06);
-  --surface-strong: rgba(255, 255, 255, 0.10);
-  --surface-muted: rgba(13, 27, 47, 0.80);
+  --surface-strong: rgba(255, 255, 255, 0.1);
+  --surface-muted: rgba(13, 27, 47, 0.8);
   --surface-input: rgba(255, 255, 255, 0.05);
-  --surface-sunken: rgba(0, 0, 0, 0.30);
+  --surface-sunken: rgba(0, 0, 0, 0.3);
 
-  --border: rgba(255, 255, 255, 0.10);
-  --border-strong: rgba(203, 219, 242, 0.30);
-  --border-focus: rgba(172, 198, 233, 0.60);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(203, 219, 242, 0.3);
+  --border-focus: rgba(172, 198, 233, 0.6);
 
   --ink: #f0f6ff;
   --ink-2: #cbd9ee;
@@ -88,9 +88,9 @@
   --info-soft: rgba(126, 180, 240, 0.12);
   --info-text: #a0cafe;
 
-  --shadow-card: 0 32px 64px -16px rgba(0, 0, 0, 0.70), 0 0 0 1px rgba(255,255,255,0.06);
-  --shadow-elevated: 0 8px 24px -6px rgba(0, 0, 0, 0.50);
-  --shadow-sm: 0 2px 8px -2px rgba(0, 0, 0, 0.40);
+  --shadow-card: 0 32px 64px -16px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --shadow-elevated: 0 8px 24px -6px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 2px 8px -2px rgba(0, 0, 0, 0.4);
 }
 
 /* ── Arc Light ──────────────────────────────────────────────────────────── */
@@ -100,13 +100,13 @@
 
   --bg: #f7f8fc;
   --bg-gradient: linear-gradient(180deg, #f2f4fb 0%, #f8f9fd 52%, #f5f3f8 100%);
-  --surface: rgba(255, 255, 255, 0.80);
+  --surface: rgba(255, 255, 255, 0.8);
   --surface-strong: rgba(255, 255, 255, 0.96);
   --surface-muted: #f0f2f8;
   --surface-input: #ffffff;
   --surface-sunken: rgba(15, 23, 42, 0.04);
 
-  --border: rgba(18, 45, 69, 0.10);
+  --border: rgba(18, 45, 69, 0.1);
   --border-strong: rgba(18, 45, 69, 0.28);
   --border-focus: #1061a6;
 
@@ -123,24 +123,24 @@
   --link: #1061a6;
 
   --success: #1a8047;
-  --success-soft: rgba(26, 128, 71, 0.10);
+  --success-soft: rgba(26, 128, 71, 0.1);
   --success-text: #166237;
 
   --danger: #ba2b4c;
-  --danger-soft: rgba(186, 43, 76, 0.10);
+  --danger-soft: rgba(186, 43, 76, 0.1);
   --danger-text: #9b1c35;
 
   --warning: #9a6b00;
-  --warning-soft: rgba(154, 107, 0, 0.10);
+  --warning-soft: rgba(154, 107, 0, 0.1);
   --warning-text: #7c5600;
 
   --info: #1061a6;
-  --info-soft: rgba(16, 97, 166, 0.10);
+  --info-soft: rgba(16, 97, 166, 0.1);
   --info-text: #0d4e89;
 
-  --shadow-card: 0 20px 48px -12px rgba(18, 45, 69, 0.18), 0 0 0 1px rgba(18,45,69,0.08);
+  --shadow-card: 0 20px 48px -12px rgba(18, 45, 69, 0.18), 0 0 0 1px rgba(18, 45, 69, 0.08);
   --shadow-elevated: 0 6px 20px -4px rgba(18, 45, 69, 0.14);
-  --shadow-sm: 0 2px 8px -2px rgba(18, 45, 69, 0.10);
+  --shadow-sm: 0 2px 8px -2px rgba(18, 45, 69, 0.1);
 }
 
 /* ── Base reset ─────────────────────────────────────────────────────────── */
@@ -411,7 +411,7 @@ a:hover {
   letter-spacing: -0.01em;
   color: var(--bg);
   background: var(--accent);
-  box-shadow: 0 4px 16px -4px rgba(0,0,0,0.30);
+  box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.3);
 }
 
 [data-theme='dark'] .btn--primary {
@@ -509,7 +509,9 @@ a:hover {
   font-family: var(--font-sans);
   color: var(--ink);
   outline: none;
-  transition: border-color var(--transition), box-shadow var(--transition);
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition);
 }
 
 .input::placeholder {
@@ -759,7 +761,9 @@ a:hover {
   font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
-  transition: color var(--transition-fast), border-color var(--transition-fast);
+  transition:
+    color var(--transition-fast),
+    border-color var(--transition-fast);
   margin-bottom: -1px;
 }
 
@@ -955,10 +959,18 @@ a:hover {
   color: var(--subtle);
 }
 
-.log__row--success .log__glyph { color: var(--success-text); }
-.log__row--error .log__glyph { color: var(--danger-text); }
-.log__row--warning .log__glyph { color: var(--warning-text); }
-.log__row--info .log__glyph { color: var(--info-text); }
+.log__row--success .log__glyph {
+  color: var(--success-text);
+}
+.log__row--error .log__glyph {
+  color: var(--danger-text);
+}
+.log__row--warning .log__glyph {
+  color: var(--warning-text);
+}
+.log__row--info .log__glyph {
+  color: var(--info-text);
+}
 
 .log__body {
   flex: 1;
@@ -979,7 +991,9 @@ a:hover {
   word-break: break-word;
 }
 
-.log__row--error .log__message { color: var(--danger-text); }
+.log__row--error .log__message {
+  color: var(--danger-text);
+}
 
 /* ── Receipt ─────────────────────────────────────────────────────────────── */
 
@@ -1092,7 +1106,9 @@ a:hover {
   width: 100%;
   color: inherit;
   font: inherit;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .history-item:hover {
@@ -1295,7 +1311,9 @@ a:hover {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .skeleton {
@@ -1311,7 +1329,9 @@ a:hover {
 }
 
 @keyframes shimmer {
-  to { background-position: -200% 0; }
+  to {
+    background-position: -200% 0;
+  }
 }
 
 /* ── Reduced motion ──────────────────────────────────────────────────────── */

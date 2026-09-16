@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { History, Trash2, ExternalLink, ChevronDown, ChevronUp, AlertTriangle, Loader2 } from 'lucide-react';
+import {
+  History,
+  Trash2,
+  ExternalLink,
+  ChevronDown,
+  ChevronUp,
+  AlertTriangle,
+  Loader2,
+} from 'lucide-react';
 import type { ChainConfig, TransactionRecord } from '../types';
 import { explorerTxUrl } from '../config/chains';
 import type { HistoryState } from '../hooks/useHistory';
@@ -18,10 +26,14 @@ function formatTimestamp(ts: number): string {
 
 function statusLabel(record: TransactionRecord): string {
   switch (record.status) {
-    case 'confirmed': return 'Confirmed';
-    case 'pending': return 'Pending';
-    case 'failed': return 'Failed';
-    case 'aborted': return 'Aborted';
+    case 'confirmed':
+      return 'Confirmed';
+    case 'pending':
+      return 'Pending';
+    case 'failed':
+      return 'Failed';
+    case 'aborted':
+      return 'Aborted';
   }
 }
 
@@ -75,7 +87,11 @@ export function TransactionHistory({ chain, history }: Props): React.JSX.Element
               color: 'var(--muted)',
             }}
           >
-            <History size={28} aria-hidden="true" style={{ marginBottom: 'var(--space-3)', opacity: 0.35 }} />
+            <History
+              size={28}
+              aria-hidden="true"
+              style={{ marginBottom: 'var(--space-3)', opacity: 0.35 }}
+            />
             <p style={{ fontSize: 14, margin: 0 }}>No transactions on {chain.name} yet.</p>
           </div>
         )
@@ -102,21 +118,35 @@ export function TransactionHistory({ chain, history }: Props): React.JSX.Element
                 >
                   <div className="row-between">
                     <span className="row" style={{ gap: 'var(--space-2)', minWidth: 0 }}>
-                      <span className={`badge badge--${record.status}`}>
-                        {statusLabel(record)}
-                      </span>
-                      <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)', fontVariantNumeric: 'tabular-nums' }}>
+                      <span className={`badge badge--${record.status}`}>{statusLabel(record)}</span>
+                      <span
+                        style={{
+                          fontSize: 14,
+                          fontWeight: 600,
+                          color: 'var(--ink)',
+                          fontVariantNumeric: 'tabular-nums',
+                        }}
+                      >
                         {record.amount} {record.symbol}
                         {record.tokenId !== null && (
-                          <span style={{ color: 'var(--muted)', fontWeight: 400 }}> #{record.tokenId}</span>
+                          <span style={{ color: 'var(--muted)', fontWeight: 400 }}>
+                            {' '}
+                            #{record.tokenId}
+                          </span>
                         )}
                       </span>
                     </span>
                     <span className="row" style={{ gap: 6, flexShrink: 0 }}>
                       <span className="hint">{formatTimestamp(record.timestamp)}</span>
-                      {isOpen
-                        ? <ChevronUp size={13} aria-hidden="true" style={{ color: 'var(--muted)' }} />
-                        : <ChevronDown size={13} aria-hidden="true" style={{ color: 'var(--muted)' }} />}
+                      {isOpen ? (
+                        <ChevronUp size={13} aria-hidden="true" style={{ color: 'var(--muted)' }} />
+                      ) : (
+                        <ChevronDown
+                          size={13}
+                          aria-hidden="true"
+                          style={{ color: 'var(--muted)' }}
+                        />
+                      )}
                     </span>
                   </div>
 
@@ -144,10 +174,14 @@ export function TransactionHistory({ chain, history }: Props): React.JSX.Element
                         </span>
                       )}
                       {record.blockNumber !== null && (
-                        <span style={{ fontVariantNumeric: 'tabular-nums' }}>Block: {record.blockNumber}</span>
+                        <span style={{ fontVariantNumeric: 'tabular-nums' }}>
+                          Block: {record.blockNumber}
+                        </span>
                       )}
                       {record.gasUsed !== null && (
-                        <span style={{ fontVariantNumeric: 'tabular-nums' }}>Gas used: {record.gasUsed.toLocaleString()}</span>
+                        <span style={{ fontVariantNumeric: 'tabular-nums' }}>
+                          Gas used: {record.gasUsed.toLocaleString()}
+                        </span>
                       )}
                       {record.errorMessage !== null && (
                         <span style={{ color: 'var(--danger-text)' }}>{record.errorMessage}</span>
@@ -169,9 +203,13 @@ export function TransactionHistory({ chain, history }: Props): React.JSX.Element
           disabled={history.isLoading}
           onClick={history.loadMore}
         >
-          {history.isLoading
-            ? <><Loader2 size={13} aria-hidden="true" className="spinner" /> Loading…</>
-            : 'Load more'}
+          {history.isLoading ? (
+            <>
+              <Loader2 size={13} aria-hidden="true" className="spinner" /> Loading…
+            </>
+          ) : (
+            'Load more'
+          )}
         </button>
       )}
     </section>

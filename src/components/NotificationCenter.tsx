@@ -43,7 +43,9 @@ export function NotificationCenter(): React.JSX.Element {
             <div style={{ minWidth: 0 }}>
               <strong style={{ display: 'block', fontSize: 13 }}>{notification.title}</strong>
               {notification.message.length > 0 && (
-                <span style={{ fontSize: 12, opacity: 0.9, wordBreak: 'break-word', lineHeight: 1.5 }}>
+                <span
+                  style={{ fontSize: 12, opacity: 0.9, wordBreak: 'break-word', lineHeight: 1.5 }}
+                >
                   {notification.message}
                 </span>
               )}

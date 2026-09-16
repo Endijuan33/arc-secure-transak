@@ -41,9 +41,18 @@ export function TokenSelector({
       <div>
         <span className="label">Asset</span>
         <div className="row" style={{ gap: 'var(--space-2)' }}>
-          <span className="skeleton" style={{ width: 88, height: 36, borderRadius: 'var(--radius-pill)' }} />
-          <span className="skeleton" style={{ width: 88, height: 36, borderRadius: 'var(--radius-pill)' }} />
-          <span className="skeleton" style={{ width: 88, height: 36, borderRadius: 'var(--radius-pill)' }} />
+          <span
+            className="skeleton"
+            style={{ width: 88, height: 36, borderRadius: 'var(--radius-pill)' }}
+          />
+          <span
+            className="skeleton"
+            style={{ width: 88, height: 36, borderRadius: 'var(--radius-pill)' }}
+          />
+          <span
+            className="skeleton"
+            style={{ width: 88, height: 36, borderRadius: 'var(--radius-pill)' }}
+          />
         </div>
       </div>
     );
@@ -54,7 +63,9 @@ export function TokenSelector({
   return (
     <div>
       <div className="row-between" style={{ marginBottom: 'var(--space-2)' }}>
-        <span className="label" style={{ marginBottom: 0 }}>Asset</span>
+        <span className="label" style={{ marginBottom: 0 }}>
+          Asset
+        </span>
         {assets.length >= SEARCH_THRESHOLD && (
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
             <Search
@@ -100,7 +111,13 @@ export function TokenSelector({
                   <img className="token-chip__logo" src={asset.logo} alt="" aria-hidden="true" />
                 )}
                 <span style={{ fontWeight: 600 }}>{asset.symbol}</span>
-                <span style={{ fontSize: 11, color: isSelected ? 'var(--accent-text)' : 'var(--muted)', fontVariantNumeric: 'tabular-nums' }}>
+                <span
+                  style={{
+                    fontSize: 11,
+                    color: isSelected ? 'var(--accent-text)' : 'var(--muted)',
+                    fontVariantNumeric: 'tabular-nums',
+                  }}
+                >
                   {asset.formatted}
                 </span>
               </button>

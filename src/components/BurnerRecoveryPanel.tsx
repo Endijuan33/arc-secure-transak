@@ -35,34 +35,45 @@ export function BurnerRecoveryPanel({ chain, recovery }: Props): React.JSX.Eleme
         </div>
       </div>
 
-      <div className="panel stack" style={{ gap: 'var(--space-2)', background: 'var(--surface-sunken)' }}>
+      <div
+        className="panel stack"
+        style={{ gap: 'var(--space-2)', background: 'var(--surface-sunken)' }}
+      >
         <span className="hint">Burner address holding your assets</span>
         <a
           className="mono"
           href={explorerAddressUrl(chain, burner)}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: 4, color: 'var(--link)' }}
+          style={{
+            fontSize: 12,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 4,
+            color: 'var(--link)',
+          }}
         >
           {burner}
           <ExternalLink size={10} aria-hidden="true" />
         </a>
         <p className="hint" style={{ margin: 0 }}>
-          Check the explorer first. If the transfer landed, no recovery is needed and you can dismiss
-          this panel.
+          Check the explorer first. If the transfer landed, no recovery is needed and you can
+          dismiss this panel.
         </p>
       </div>
 
       {!showDanger ? (
-        <div className="row" style={{ justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
+        <div
+          className="row"
+          style={{ justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-2)' }}
+        >
           <button
             type="button"
             className="btn btn--chip"
             onClick={() => setShowDanger(true)}
             style={{ gap: 4 }}
           >
-            <Key size={10} aria-hidden="true" />
-            I need the burner private key
+            <Key size={10} aria-hidden="true" />I need the burner private key
           </button>
           <button
             type="button"
@@ -75,10 +86,15 @@ export function BurnerRecoveryPanel({ chain, recovery }: Props): React.JSX.Eleme
           </button>
         </div>
       ) : (
-        <div className="panel stack" style={{ gap: 'var(--space-3)', background: 'var(--surface-sunken)', borderColor: 'var(--danger)' }}>
-          <strong style={{ color: 'var(--danger-text)', fontSize: 13 }}>
-            Danger zone
-          </strong>
+        <div
+          className="panel stack"
+          style={{
+            gap: 'var(--space-3)',
+            background: 'var(--surface-sunken)',
+            borderColor: 'var(--danger)',
+          }}
+        >
+          <strong style={{ color: 'var(--danger-text)', fontSize: 13 }}>Danger zone</strong>
           <p className="hint" style={{ margin: 0 }}>
             Revealing the key removes the encryption protecting it. Anyone who sees your screen, a
             screen recording, or your clipboard can drain this burner. Import it into a wallet, move
@@ -134,9 +150,7 @@ export function BurnerRecoveryPanel({ chain, recovery }: Props): React.JSX.Eleme
                 {recovery.revealedKey}
               </code>
               <div className="row-between" style={{ flexWrap: 'wrap', rowGap: 'var(--space-2)' }}>
-                <span className="hint">
-                  Auto-hides in {recovery.secondsUntilHide ?? 0}s
-                </span>
+                <span className="hint">Auto-hides in {recovery.secondsUntilHide ?? 0}s</span>
                 <div className="row" style={{ gap: 'var(--space-2)' }}>
                   <button
                     type="button"
@@ -154,9 +168,15 @@ export function BurnerRecoveryPanel({ chain, recovery }: Props): React.JSX.Eleme
                     }}
                     style={{ gap: 4 }}
                   >
-                    {copied
-                      ? <><Check size={10} aria-hidden="true" /> Copied</>
-                      : <><Copy size={10} aria-hidden="true" /> Copy</>}
+                    {copied ? (
+                      <>
+                        <Check size={10} aria-hidden="true" /> Copied
+                      </>
+                    ) : (
+                      <>
+                        <Copy size={10} aria-hidden="true" /> Copy
+                      </>
+                    )}
                   </button>
                   <button
                     type="button"

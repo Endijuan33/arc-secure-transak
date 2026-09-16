@@ -1,5 +1,14 @@
 import { useMemo, useState } from 'react';
-import { CheckCircle, XCircle, AlertTriangle, Info, Copy, Check, Loader2, type LucideIcon } from 'lucide-react';
+import {
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
+  Info,
+  Copy,
+  Check,
+  Loader2,
+  type LucideIcon,
+} from 'lucide-react';
 import type { ActivityLogEntry, NotificationLevel } from '../types';
 
 interface Props {
@@ -68,7 +77,9 @@ export function ActivityLog({ entries, isRunning }: Props): React.JSX.Element | 
     <section className="panel stack" style={{ gap: 'var(--space-3)' }} aria-label="Activity log">
       <div className="row-between" style={{ flexWrap: 'wrap', rowGap: 'var(--space-2)' }}>
         <span className="row" style={{ gap: 'var(--space-2)' }}>
-          <span className="label" style={{ marginBottom: 0 }}>Activity</span>
+          <span className="label" style={{ marginBottom: 0 }}>
+            Activity
+          </span>
           {isRunning && (
             <span className="badge badge--pending" style={{ gap: 4 }}>
               <Loader2 size={9} aria-hidden="true" className="spinner" />
@@ -116,9 +127,15 @@ export function ActivityLog({ entries, isRunning }: Props): React.JSX.Element | 
             }}
             style={{ gap: 4 }}
           >
-            {copied
-              ? <><Check size={10} aria-hidden="true" /> Copied</>
-              : <><Copy size={10} aria-hidden="true" /> Copy</>}
+            {copied ? (
+              <>
+                <Check size={10} aria-hidden="true" /> Copied
+              </>
+            ) : (
+              <>
+                <Copy size={10} aria-hidden="true" /> Copy
+              </>
+            )}
           </button>
         </div>
       </div>

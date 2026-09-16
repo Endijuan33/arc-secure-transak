@@ -102,10 +102,7 @@ export function DestinationInput({
       </div>
 
       {showBook && (
-        <div
-          className="panel stack"
-          style={{ gap: 'var(--space-3)', marginTop: 'var(--space-3)' }}
-        >
+        <div className="panel stack" style={{ gap: 'var(--space-3)', marginTop: 'var(--space-3)' }}>
           {addressBook.length > 0 && (
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
               <Search
@@ -131,7 +128,10 @@ export function DestinationInput({
           )}
 
           {filteredBook.length === 0 ? (
-            <p className="hint" style={{ margin: 0, textAlign: 'center', padding: 'var(--space-2) 0' }}>
+            <p
+              className="hint"
+              style={{ margin: 0, textAlign: 'center', padding: 'var(--space-2) 0' }}
+            >
               {addressBook.length === 0 ? 'No bookmarks yet.' : 'No bookmarks match your search.'}
             </p>
           ) : (
@@ -168,12 +168,24 @@ export function DestinationInput({
                       setShowBook(false);
                     }}
                   >
-                    <span style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>
+                    <span
+                      style={{
+                        display: 'block',
+                        fontSize: 13,
+                        fontWeight: 600,
+                        color: 'var(--ink)',
+                      }}
+                    >
                       {entry.tag}
                     </span>
                     <span
                       className="mono"
-                      style={{ fontSize: 11, color: 'var(--muted)', display: 'block', marginTop: 1 }}
+                      style={{
+                        fontSize: 11,
+                        color: 'var(--muted)',
+                        display: 'block',
+                        marginTop: 1,
+                      }}
                     >
                       {entry.address.slice(0, 10)}…{entry.address.slice(-6)}
                     </span>

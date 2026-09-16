@@ -47,7 +47,9 @@ export function AmountInput({
       {/* Amount field */}
       <div>
         <div className="row-between" style={{ marginBottom: 'var(--space-2)' }}>
-          <span className="label" style={{ marginBottom: 0 }}>Amount</span>
+          <span className="label" style={{ marginBottom: 0 }}>
+            Amount
+          </span>
           <button type="button" className="btn btn--chip" onClick={onMax}>
             MAX
           </button>
@@ -90,7 +92,9 @@ export function AmountInput({
       <div className="row-between" style={{ flexWrap: 'wrap', rowGap: 'var(--space-2)' }}>
         <span className="row" style={{ gap: 6 }}>
           <Fuel size={13} aria-hidden="true" style={{ color: 'var(--muted)' }} />
-          <span className="label" style={{ marginBottom: 0 }}>Fee priority</span>
+          <span className="label" style={{ marginBottom: 0 }}>
+            Fee priority
+          </span>
         </span>
         <div className="segmented" role="group" aria-label="Fee priority">
           {GAS_SPEEDS.map((entry) => (
@@ -108,11 +112,7 @@ export function AmountInput({
       </div>
 
       {/* Gas estimate panel */}
-      <div
-        className="surface-sunken"
-        style={{ fontSize: 12 }}
-        aria-live="polite"
-      >
+      <div className="surface-sunken" style={{ fontSize: 12 }} aria-live="polite">
         {gas.isLoading && estimate === null ? (
           <span className="skeleton" style={{ display: 'block', width: '65%', height: 13 }} />
         ) : gas.error !== null ? (
@@ -127,7 +127,13 @@ export function AmountInput({
           <div className="stack" style={{ gap: 4 }}>
             <div className="row-between">
               <span style={{ color: 'var(--muted)' }}>Gas limit</span>
-              <span style={{ color: 'var(--ink-2)', fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
+              <span
+                style={{
+                  color: 'var(--ink-2)',
+                  fontFamily: 'var(--font-mono)',
+                  fontVariantNumeric: 'tabular-nums',
+                }}
+              >
                 {estimate.gasLimit.toString()}
                 {!estimate.simulated && (
                   <span style={{ color: 'var(--warning-text)', marginLeft: 6 }}>approx</span>
@@ -136,13 +142,29 @@ export function AmountInput({
             </div>
             <div className="row-between">
               <span style={{ color: 'var(--muted)' }}>Gas price</span>
-              <span style={{ color: 'var(--ink-2)', fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
+              <span
+                style={{
+                  color: 'var(--ink-2)',
+                  fontFamily: 'var(--font-mono)',
+                  fontVariantNumeric: 'tabular-nums',
+                }}
+              >
                 {Number(feePerGas ?? '0').toFixed(3)} gwei
               </span>
             </div>
-            <div className="row-between" style={{ borderTop: '1px solid var(--border)', paddingTop: 6, marginTop: 2 }}>
+            <div
+              className="row-between"
+              style={{ borderTop: '1px solid var(--border)', paddingTop: 6, marginTop: 2 }}
+            >
               <span style={{ color: 'var(--muted)' }}>Burner funding</span>
-              <span style={{ color: 'var(--ink)', fontWeight: 600, fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
+              <span
+                style={{
+                  color: 'var(--ink)',
+                  fontWeight: 600,
+                  fontFamily: 'var(--font-mono)',
+                  fontVariantNumeric: 'tabular-nums',
+                }}
+              >
                 {gas.fundingFormatted === null
                   ? '—'
                   : `${Number(gas.fundingFormatted).toFixed(6)} ${chain.nativeCurrency.symbol}`}
