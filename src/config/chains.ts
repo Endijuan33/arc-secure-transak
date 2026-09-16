@@ -53,7 +53,7 @@ const ARC_TESTNET: ChainConfig = {
 
 const ARC_MAINNET: ChainConfig = {
   id: 5042,
-  name: 'Arc',
+  name: 'Arc Mainnet',
   network: 'arc',
   testnet: false,
   nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
@@ -94,7 +94,7 @@ const ARC_MAINNET: ChainConfig = {
 export const SUPPORTED_CHAINS: readonly ChainConfig[] = [ARC_TESTNET, ARC_MAINNET];
 
 /** The chain selected on first load. */
-export const DEFAULT_CHAIN: ChainConfig = ARC_TESTNET;
+export const DEFAULT_CHAIN: ChainConfig = ARC_MAINNET;
 
 /** Logo for the native asset, shared by every chain in the registry. */
 export const NATIVE_LOGO: string = usdcLogo;
