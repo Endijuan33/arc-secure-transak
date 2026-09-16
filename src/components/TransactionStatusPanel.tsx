@@ -1,4 +1,4 @@
-import { ICONS } from '../config/constants';
+import { CheckCircle, XCircle, AlertTriangle, Info, Loader2, type LucideIcon } from 'lucide-react';
 import type { TransactionStatus } from '../types';
 
 interface Props {
@@ -9,34 +9,34 @@ interface Props {
 
 const PRESENTATION: Record<
   TransactionStatus | 'idle',
-  { readonly variant: string; readonly icon: string; readonly title: string }
+  {
+    readonly variant: string;
+    readonly Icon: LucideIcon;
+    readonly title: string;
+  }
 > = {
-  idle: { variant: 'info', icon: ICONS.info, title: 'Ready' },
-  pending: { variant: 'info', icon: ICONS.loading, title: 'In progress' },
-  confirmed: { variant: 'success', icon: ICONS.check, title: 'Confirmed' },
-  failed: { variant: 'error', icon: ICONS.error, title: 'Failed' },
-  aborted: { variant: 'warning', icon: ICONS.abort, title: 'Aborted' },
+  idle: { variant: 'info', Icon: Info, title: 'Ready' },
+  pending: { variant: 'info', Icon: Loader2, title: 'In progress' },
+  confirmed: { variant: 'success', Icon: CheckCircle, title: 'Confirmed' },
+  failed: { variant: 'error', Icon: XCircle, title: 'Failed' },
+  aborted: { variant: 'warning', Icon: AlertTriangle, title: 'Aborted' },
 };
 
-/**
- * Single-line status banner.
- *
- * Narrowed to exactly that: the technical log moved to `ActivityLog` and the
- * transaction details to `TransactionReceipt`. Previously this component carried
- * all three, which meant the one thing a user checks at a glance — what is
- * happening right now — competed with a wall of debug text.
- */
 export function TransactionStatusPanel({ status, message, isRunning }: Props): React.JSX.Element {
-  const presentation = PRESENTATION[status];
+  const { variant, Icon, title } = PRESENTATION[status];
 
   return (
-    <div className={`callout callout--${presentation.variant}`} aria-live="polite">
+    <div className={`callout callout--${variant}`} aria-live="polite">
       <span className="callout__icon">
-        {isRunning ? <span className="spinner">{ICONS.loading}</span> : presentation.icon}
+        {isRunning ? (
+          <Loader2 size={16} aria-hidden="true" className="spinner" />
+        ) : (
+          <Icon size={16} aria-hidden="true" />
+        )}
       </span>
       <div style={{ minWidth: 0 }}>
-        <strong style={{ display: 'block', marginBottom: 2 }}>{presentation.title}</strong>
-        <span style={{ wordBreak: 'break-word', lineHeight: 1.5 }}>{message}</span>
+        <strong style={{ display: 'block', marginBottom: 2 }}>{title}</strong>
+        <span style={{ wordBreak: 'break-word', lineHeight: 1.55, fontSize: 13 }}>{message}</span>
       </div>
     </div>
   );

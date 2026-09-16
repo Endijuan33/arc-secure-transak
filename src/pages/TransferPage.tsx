@@ -1,7 +1,7 @@
 import { Suspense, lazy, useMemo, useState } from 'react';
 import { formatUnits } from 'ethers';
+import { SendHorizonal, StopCircle, Image as ImageIcon } from 'lucide-react';
 import type { NftAsset, TokenBalance } from '../types';
-import { ICONS } from '../config/constants';
 import { useSessionStore } from '../store/sessionStore';
 import { useTransferStore } from '../store/transferStore';
 import { useWallet } from '../hooks/useWallet';
@@ -25,17 +25,12 @@ import { BurnerRecoveryPanel } from '../components/BurnerRecoveryPanel';
 import { Footer } from '../components/Footer';
 import { notify } from '../store/notificationStore';
 
-/**
- * Lazily loaded: the NFT tab pulls in a grid plus remote image loading that most
- * sessions never open, and history is below the fold on first paint.
- */
 const NftSelector = lazy(async () => ({
   default: (await import('../components/NftSelector')).NftSelector,
 }));
 const TransactionHistory = lazy(async () => ({
   default: (await import('../components/TransactionHistory')).TransactionHistory,
 }));
-// Documentation is substantial prose that most sessions never open.
 const AboutPanel = lazy(async () => ({
   default: (await import('../components/AboutPanel')).AboutPanel,
 }));
@@ -58,7 +53,12 @@ function nftKeyOf(nft: NftAsset): string {
 }
 
 function LoadingBlock(): React.JSX.Element {
-  return <span className="skeleton" style={{ display: 'block', height: 80 }} />;
+  return (
+    <span
+      className="skeleton"
+      style={{ display: 'block', height: 80, borderRadius: 'var(--radius-lg)' }}
+    />
+  );
 }
 
 export function TransferPage(): React.JSX.Element {
@@ -85,27 +85,14 @@ export function TransferPage(): React.JSX.Element {
   const [mode, setMode] = useState<Mode>('token');
   const [recipient, setRecipient] = useState('');
   const [amount, setAmount] = useState('');
-  /**
-   * Only the asset *key* is stored, never the balance object.
-   *
-   * Storing the object would mean re-synchronising it every time balances
-   * refresh, which is what the old code did through an effect. Keying by
-   * address and resolving during render keeps the displayed balance current for
-   * free, and `null` naturally falls back to the auto-selection below.
-   */
   const [selectedAssetKey, setSelectedAssetKey] = useState<string | null>(null);
   const [selectedNftKey, setSelectedNftKey] = useState<string | null>(null);
   const [nftAmount, setNftAmount] = useState('1');
 
-  // Balance polling and gas quoting pause during a run: mid-pipeline values are
-  // transient and refetching wastes RPC quota at the worst possible moment.
   const balances = useBalances(chain, wallet.address, { paused: isRunning });
   const nfts = useNfts(chain, wallet.address, { enabled: mode === 'nft' });
   const history = useHistory(chain.id, wallet.address);
 
-  // Resolved during render: the explicit choice when it still exists, otherwise
-  // the first asset with a balance. No effect, so no cascading render and no
-  // stale selection after a disconnect or account switch.
   const selectedAsset = useMemo((): TokenBalance | null => {
     if (balances.all.length === 0) return null;
     if (selectedAssetKey !== null) {
@@ -133,8 +120,6 @@ export function TransferPage(): React.JSX.Element {
 
   const transak = useTransak(chain, wallet, draft);
 
-  // The gas quote needs a well-formed request; an invalid draft simply yields no
-  // quote rather than a stream of failing estimate calls.
   const quotableRequest = useMemo(() => {
     const built = buildTransferRequest(draft, wallet.address);
     return built.ok ? built.request : null;
@@ -149,8 +134,6 @@ export function TransferPage(): React.JSX.Element {
       return;
     }
     if (selectedAsset.kind === 'native') {
-      // The burner still has to be funded for gas, so the whole native balance
-      // can never be sent. The quote tells us exactly how much to hold back.
       const funding = gas.fundingWei;
       if (funding === null) {
         notify.info(
@@ -173,9 +156,6 @@ export function TransferPage(): React.JSX.Element {
     setAmount(selectedAsset.formatted);
   };
 
-  // The receipt describes what was actually sent, so it reads from the validated
-  // request rather than the live form fields — the user may edit those after a
-  // transfer completes, and the receipt must not silently change with them.
   const receiptRequest = transak.validation.ok ? transak.validation.request : null;
   const receiptSymbol = result === null ? '' : (receiptRequest?.symbol ?? '');
   const receiptAmount =
@@ -194,9 +174,6 @@ export function TransferPage(): React.JSX.Element {
     void transak.submit();
   };
 
-  // `isSecureContext` is false on a plain-HTTP origin, where the browser withholds
-  // `crypto.subtle`. Surfacing it in the header tells the user before they start,
-  // rather than letting the pipeline fail at the burner-creation step.
   const isSecureContext = typeof window !== 'undefined' && window.isSecureContext;
 
   return (
@@ -214,11 +191,16 @@ export function TransferPage(): React.JSX.Element {
         />
 
         {!isSecureContext && (
-          <div className="callout callout--error" style={{ marginBottom: 'var(--space-4)' }}>
-            <span className="callout__icon">{ICONS.warning}</span>
+          <div
+            className="callout callout--error"
+            style={{ marginBottom: 'var(--space-5)' }}
+          >
+            <span className="callout__icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+            </span>
             <div>
               <strong style={{ display: 'block', marginBottom: 2 }}>Insecure origin</strong>
-              <span style={{ fontSize: 13 }}>
+              <span style={{ fontSize: 13, lineHeight: 1.55 }}>
                 This page is not served over HTTPS or localhost, so the browser withholds Web
                 Crypto. Burner keys cannot be encrypted and transfers will be refused. Reopen the
                 app on a secure origin.
@@ -280,7 +262,8 @@ export function TransferPage(): React.JSX.Element {
           aria-labelledby="tab-transfer"
           hidden={tab !== 'transfer'}
         >
-          <form className="stack" onSubmit={onSubmit}>
+          <form className="stack" onSubmit={onSubmit} style={{ gap: 'var(--space-5)' }}>
+            {/* Asset type selector */}
             {wallet.isConnected && (
               <div className="segmented" role="group" aria-label="Asset type">
                 <button
@@ -296,8 +279,10 @@ export function TransferPage(): React.JSX.Element {
                   className={`segmented__option${mode === 'nft' ? ' segmented__option--active' : ''}`}
                   onClick={() => setMode('nft')}
                   aria-pressed={mode === 'nft'}
+                  style={{ gap: 4 }}
                 >
-                  {ICONS.nft} NFTs
+                  <ImageIcon size={12} aria-hidden="true" />
+                  NFTs
                 </button>
               </div>
             )}
@@ -355,13 +340,26 @@ export function TransferPage(): React.JSX.Element {
               />
             )}
 
+            {/* Primary CTA */}
             {isRunning ? (
-              <button type="button" className="btn btn--danger" onClick={transak.abort}>
-                <span className="spinner">⟳</span> {ICONS.abort} Abort and recover funds
+              <button
+                type="button"
+                className="btn btn--danger"
+                onClick={transak.abort}
+                style={{ gap: 8 }}
+              >
+                <StopCircle size={16} aria-hidden="true" />
+                Abort and recover funds
               </button>
             ) : (
-              <button type="submit" className="btn btn--primary" disabled={!transak.canSubmit}>
-                🚀 Send securely
+              <button
+                type="submit"
+                className="btn btn--primary"
+                disabled={!transak.canSubmit}
+                style={{ gap: 8 }}
+              >
+                <SendHorizonal size={16} aria-hidden="true" />
+                Send securely
               </button>
             )}
 
@@ -372,8 +370,16 @@ export function TransferPage(): React.JSX.Element {
             )}
           </form>
 
-          <div className="stack" style={{ gap: 'var(--space-4)', marginTop: 'var(--space-6)' }}>
-            <TransactionStatusPanel status={status} message={statusMessage} isRunning={isRunning} />
+          {/* Post-submit panels */}
+          <div
+            className="stack"
+            style={{ gap: 'var(--space-4)', marginTop: 'var(--space-6)' }}
+          >
+            <TransactionStatusPanel
+              status={status}
+              message={statusMessage}
+              isRunning={isRunning}
+            />
 
             <TransactionReceipt
               status={status}

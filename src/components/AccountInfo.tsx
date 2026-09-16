@@ -1,3 +1,4 @@
+import { Network, Coins, AlertTriangle, ArrowLeftRight } from 'lucide-react';
 import type { ChainConfig, TokenBalance } from '../types';
 
 interface Props {
@@ -24,40 +25,87 @@ export function AccountInfo({
       <div
         className="row-between"
         style={{
-          background: 'var(--bg-surface-sunken)',
-          border: '1px solid var(--border-subtle)',
+          background: 'var(--surface-strong)',
+          border: '1px solid var(--border)',
           borderRadius: 'var(--radius-lg)',
           padding: 'var(--space-3) var(--space-4)',
-          fontSize: 13,
           flexWrap: 'wrap',
           rowGap: 'var(--space-2)',
         }}
       >
-        <span style={{ color: 'var(--text-muted)' }}>
-          Network <strong style={{ color: 'var(--text-primary)' }}>{chain.name}</strong>
+        <span
+          className="row"
+          style={{ gap: 'var(--space-2)', fontSize: 13, color: 'var(--muted)' }}
+        >
+          <Network size={13} aria-hidden="true" style={{ flexShrink: 0 }} />
+          <span>
+            Network{' '}
+            <strong style={{ color: 'var(--ink)', fontWeight: 600 }}>{chain.name}</strong>
+            {chain.testnet && (
+              <span
+                style={{
+                  marginLeft: 6,
+                  fontSize: 10,
+                  fontWeight: 600,
+                  letterSpacing: '0.05em',
+                  textTransform: 'uppercase',
+                  color: 'var(--warning-text)',
+                  background: 'var(--warning-soft)',
+                  padding: '1px 5px',
+                  borderRadius: 'var(--radius-pill)',
+                  border: '1px solid var(--warning)',
+                }}
+              >
+                testnet
+              </span>
+            )}
+          </span>
         </span>
-        <span style={{ color: 'var(--text-muted)' }}>
-          Balance{' '}
-          {isLoading && native === null ? (
-            <span className="skeleton" style={{ display: 'inline-block', width: 90, height: 14 }} />
-          ) : (
-            <strong style={{ color: 'var(--text-primary)' }}>
-              {native?.formatted ?? '0'} {chain.nativeCurrency.symbol}
-            </strong>
-          )}
+
+        <span
+          className="row"
+          style={{ gap: 'var(--space-2)', fontSize: 13, color: 'var(--muted)' }}
+        >
+          <Coins size={13} aria-hidden="true" style={{ flexShrink: 0 }} />
+          <span>
+            Balance{' '}
+            {isLoading && native === null ? (
+              <span className="skeleton" style={{ display: 'inline-block', width: 88, height: 14, verticalAlign: 'middle', borderRadius: 4 }} />
+            ) : (
+              <strong
+                style={{
+                  color: 'var(--ink)',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 13,
+                  fontVariantNumeric: 'tabular-nums',
+                  fontWeight: 600,
+                }}
+              >
+                {native?.formatted ?? '0'} {chain.nativeCurrency.symbol}
+              </strong>
+            )}
+          </span>
         </span>
       </div>
 
       {isWrongNetwork && (
-        <div className="callout callout--warning">
-          <span className="callout__icon">⚠️</span>
+        <div className="callout callout--warning" style={{ alignItems: 'center' }}>
+          <span className="callout__icon">
+            <AlertTriangle size={16} aria-hidden="true" />
+          </span>
           <div style={{ flex: 1 }}>
-            <strong style={{ display: 'block' }}>Wrong network</strong>
+            <strong style={{ display: 'block', marginBottom: 1 }}>Wrong network</strong>
             <span style={{ fontSize: 13 }}>
-              Your wallet is on a different chain. Switch to {chain.name} before sending.
+              Your wallet is connected to a different chain. Switch to {chain.name} to continue.
             </span>
           </div>
-          <button type="button" className="btn btn--chip" onClick={onSwitchNetwork}>
+          <button
+            type="button"
+            className="btn btn--chip"
+            onClick={onSwitchNetwork}
+            style={{ flexShrink: 0, gap: 4 }}
+          >
+            <ArrowLeftRight size={10} aria-hidden="true" />
             Switch
           </button>
         </div>

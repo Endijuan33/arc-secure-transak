@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Search } from 'lucide-react';
 import type { TokenBalance } from '../types';
 import { useDebouncedValue } from '../hooks/useDebounce';
 
@@ -13,7 +14,6 @@ function assetKey(asset: TokenBalance): string {
   return asset.address ?? 'native';
 }
 
-/** Show the search field only once the list is long enough to need one. */
 const SEARCH_THRESHOLD = 6;
 
 export function TokenSelector({
@@ -23,8 +23,6 @@ export function TokenSelector({
   onSelect,
 }: Props): React.JSX.Element | null {
   const [query, setQuery] = useState('');
-  // Debounced so filtering does not run on every keystroke while the token list
-  // can be long enough for the pass to be noticeable on a low-end device.
   const debouncedQuery = useDebouncedValue(query);
 
   const filtered = useMemo(() => {
@@ -43,9 +41,9 @@ export function TokenSelector({
       <div>
         <span className="label">Asset</span>
         <div className="row" style={{ gap: 'var(--space-2)' }}>
-          <span className="skeleton" style={{ width: 96, height: 34 }} />
-          <span className="skeleton" style={{ width: 96, height: 34 }} />
-          <span className="skeleton" style={{ width: 96, height: 34 }} />
+          <span className="skeleton" style={{ width: 88, height: 36, borderRadius: 'var(--radius-pill)' }} />
+          <span className="skeleton" style={{ width: 88, height: 36, borderRadius: 'var(--radius-pill)' }} />
+          <span className="skeleton" style={{ width: 88, height: 36, borderRadius: 'var(--radius-pill)' }} />
         </div>
       </div>
     );
@@ -56,25 +54,35 @@ export function TokenSelector({
   return (
     <div>
       <div className="row-between" style={{ marginBottom: 'var(--space-2)' }}>
-        <span className="label" style={{ marginBottom: 0 }}>
-          Asset
-        </span>
+        <span className="label" style={{ marginBottom: 0 }}>Asset</span>
         {assets.length >= SEARCH_THRESHOLD && (
-          <input
-            type="search"
-            className="input"
-            style={{ width: 180, padding: '6px 12px', fontSize: 12 }}
-            placeholder="Search assets"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            aria-label="Search assets"
-          />
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <Search
+              size={12}
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                left: 10,
+                color: 'var(--muted)',
+                pointerEvents: 'none',
+              }}
+            />
+            <input
+              type="search"
+              className="input"
+              style={{ width: 160, padding: '6px 10px 6px 28px', fontSize: 12 }}
+              placeholder="Search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              aria-label="Search assets"
+            />
+          </div>
         )}
       </div>
 
       {filtered.length === 0 ? (
         <p className="hint" style={{ margin: 0 }}>
-          No assets match “{debouncedQuery}”.
+          No assets match &ldquo;{debouncedQuery}&rdquo;.
         </p>
       ) : (
         <div className="row" style={{ flexWrap: 'wrap', gap: 'var(--space-2)' }}>
@@ -89,10 +97,12 @@ export function TokenSelector({
                 aria-pressed={isSelected}
               >
                 {asset.logo !== null && (
-                  <img className="token-chip__logo" src={asset.logo} alt="" />
+                  <img className="token-chip__logo" src={asset.logo} alt="" aria-hidden="true" />
                 )}
-                <span>{asset.symbol}</span>
-                <span style={{ fontSize: 11, opacity: 0.65 }}>({asset.formatted})</span>
+                <span style={{ fontWeight: 600 }}>{asset.symbol}</span>
+                <span style={{ fontSize: 11, color: isSelected ? 'var(--accent-text)' : 'var(--muted)', fontVariantNumeric: 'tabular-nums' }}>
+                  {asset.formatted}
+                </span>
               </button>
             );
           })}

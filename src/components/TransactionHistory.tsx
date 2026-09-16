@@ -1,6 +1,6 @@
 import { useState } from 'react';
+import { History, Trash2, ExternalLink, ChevronDown, ChevronUp, AlertTriangle, Loader2 } from 'lucide-react';
 import type { ChainConfig, TransactionRecord } from '../types';
-import { ICONS } from '../config/constants';
 import { explorerTxUrl } from '../config/chains';
 import type { HistoryState } from '../hooks/useHistory';
 
@@ -18,43 +18,35 @@ function formatTimestamp(ts: number): string {
 
 function statusLabel(record: TransactionRecord): string {
   switch (record.status) {
-    case 'confirmed':
-      return 'Confirmed';
-    case 'pending':
-      return 'Pending';
-    case 'failed':
-      return 'Failed';
-    case 'aborted':
-      return 'Aborted';
+    case 'confirmed': return 'Confirmed';
+    case 'pending': return 'Pending';
+    case 'failed': return 'Failed';
+    case 'aborted': return 'Aborted';
   }
 }
 
-/**
- * Cursor-paginated history.
- *
- * "Load more" rather than numbered pages: the IndexedDB source is
- * cursor-addressed, so there is no offset to jump to. See
- * `history.service.ts` for why that tradeoff is deliberate.
- */
 export function TransactionHistory({ chain, history }: Props): React.JSX.Element {
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   return (
-    <section className="section-divider stack" style={{ gap: 'var(--space-3)' }}>
+    <section className="section-divider stack" style={{ gap: 'var(--space-4)' }}>
       <div className="row-between">
-        <h2 className="section-title">
-          {ICONS.history} History{history.total > 0 && ` (${history.total})`}
+        <h2 className="section-title row" style={{ gap: 8 }}>
+          <History size={16} aria-hidden="true" />
+          History{history.total > 0 && ` (${history.total})`}
         </h2>
         {history.items.length > 0 && (
           <button
             type="button"
             className="btn btn--chip"
+            style={{ gap: 4 }}
             onClick={() => {
               if (window.confirm(`Delete all ${chain.name} transaction history?`)) {
                 void history.clearAll();
               }
             }}
           >
+            <Trash2 size={10} aria-hidden="true" />
             Clear all
           </button>
         )}
@@ -62,7 +54,9 @@ export function TransactionHistory({ chain, history }: Props): React.JSX.Element
 
       {history.error !== null && (
         <div className="callout callout--warning">
-          <span className="callout__icon">{ICONS.warning}</span>
+          <span className="callout__icon">
+            <AlertTriangle size={16} aria-hidden="true" />
+          </span>
           <span style={{ fontSize: 13 }}>{history.error}</span>
         </div>
       )}
@@ -70,16 +64,20 @@ export function TransactionHistory({ chain, history }: Props): React.JSX.Element
       {history.items.length === 0 ? (
         history.isLoading ? (
           <div className="stack" style={{ gap: 'var(--space-2)' }}>
-            <span className="skeleton" style={{ height: 48 }} />
-            <span className="skeleton" style={{ height: 48 }} />
+            <span className="skeleton" style={{ height: 52, borderRadius: 'var(--radius-lg)' }} />
+            <span className="skeleton" style={{ height: 52, borderRadius: 'var(--radius-lg)' }} />
           </div>
         ) : (
-          <p
-            className="hint"
-            style={{ margin: 0, textAlign: 'center', padding: 'var(--space-4) 0' }}
+          <div
+            style={{
+              textAlign: 'center',
+              padding: 'var(--space-10) var(--space-4)',
+              color: 'var(--muted)',
+            }}
           >
-            No transactions on {chain.name} yet.
-          </p>
+            <History size={28} aria-hidden="true" style={{ marginBottom: 'var(--space-3)', opacity: 0.35 }} />
+            <p style={{ fontSize: 14, margin: 0 }}>No transactions on {chain.name} yet.</p>
+          </div>
         )
       ) : (
         <ul
@@ -104,13 +102,22 @@ export function TransactionHistory({ chain, history }: Props): React.JSX.Element
                 >
                   <div className="row-between">
                     <span className="row" style={{ gap: 'var(--space-2)', minWidth: 0 }}>
-                      <span className={`badge badge--${record.status}`}>{statusLabel(record)}</span>
-                      <span style={{ fontSize: 14, fontWeight: 500 }}>
+                      <span className={`badge badge--${record.status}`}>
+                        {statusLabel(record)}
+                      </span>
+                      <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)', fontVariantNumeric: 'tabular-nums' }}>
                         {record.amount} {record.symbol}
-                        {record.tokenId !== null && ` #${record.tokenId}`}
+                        {record.tokenId !== null && (
+                          <span style={{ color: 'var(--muted)', fontWeight: 400 }}> #{record.tokenId}</span>
+                        )}
                       </span>
                     </span>
-                    <span className="hint">{formatTimestamp(record.timestamp)}</span>
+                    <span className="row" style={{ gap: 6, flexShrink: 0 }}>
+                      <span className="hint">{formatTimestamp(record.timestamp)}</span>
+                      {isOpen
+                        ? <ChevronUp size={13} aria-hidden="true" style={{ color: 'var(--muted)' }} />
+                        : <ChevronDown size={13} aria-hidden="true" style={{ color: 'var(--muted)' }} />}
+                    </span>
                   </div>
 
                   {isOpen && (
@@ -123,17 +130,25 @@ export function TransactionHistory({ chain, history }: Props): React.JSX.Element
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(event) => event.stopPropagation()}
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
                         >
-                          {record.hash} {ICONS.external}
+                          {record.hash.slice(0, 18)}…{record.hash.slice(-6)}
+                          <ExternalLink size={10} aria-hidden="true" />
                         </a>
                       ) : (
                         <span className="hint">No hash recorded (never broadcast).</span>
                       )}
                       {record.burner.length > 0 && (
-                        <span className="mono">Burner: {record.burner}</span>
+                        <span className="mono" style={{ color: 'var(--muted)' }}>
+                          Burner: {record.burner.slice(0, 10)}…{record.burner.slice(-6)}
+                        </span>
                       )}
-                      {record.blockNumber !== null && <span>Block: {record.blockNumber}</span>}
-                      {record.gasUsed !== null && <span>Gas used: {record.gasUsed}</span>}
+                      {record.blockNumber !== null && (
+                        <span style={{ fontVariantNumeric: 'tabular-nums' }}>Block: {record.blockNumber}</span>
+                      )}
+                      {record.gasUsed !== null && (
+                        <span style={{ fontVariantNumeric: 'tabular-nums' }}>Gas used: {record.gasUsed.toLocaleString()}</span>
+                      )}
                       {record.errorMessage !== null && (
                         <span style={{ color: 'var(--danger-text)' }}>{record.errorMessage}</span>
                       )}
@@ -150,11 +165,13 @@ export function TransactionHistory({ chain, history }: Props): React.JSX.Element
         <button
           type="button"
           className="btn btn--ghost"
-          style={{ alignSelf: 'center' }}
+          style={{ alignSelf: 'center', gap: 6 }}
           disabled={history.isLoading}
           onClick={history.loadMore}
         >
-          {history.isLoading ? 'Loading…' : 'Load more'}
+          {history.isLoading
+            ? <><Loader2 size={13} aria-hidden="true" className="spinner" /> Loading…</>
+            : 'Load more'}
         </button>
       )}
     </section>

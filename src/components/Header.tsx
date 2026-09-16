@@ -1,4 +1,4 @@
-import { ICONS } from '../config/constants';
+import { Shield, Sun, Moon, Wallet, ChevronDown } from 'lucide-react';
 import { SUPPORTED_CHAINS } from '../config/chains';
 import type { ChainConfig, ThemeMode } from '../types';
 
@@ -30,40 +30,44 @@ export function Header({
   return (
     <header className="app-header">
       <div className="app-header__brand">
-        <img src="/arc-logo.svg" alt="" width={40} height={40} className="app-header__logo" />
+        <img src="/arc-logo.svg" alt="Arc Secure Transak" width={38} height={38} className="app-header__logo" />
         <div style={{ minWidth: 0 }}>
-          <h1 className="app-header__title">Arc Secure Transak</h1>
+          <h1 className="app-header__title display">Arc Secure Transak</h1>
           <p className="app-header__tagline">
-            Anti-drainer transfers via an ephemeral burner wallet
+            Anti-drainer · ephemeral burner · zero recipient exposure
           </p>
         </div>
       </div>
 
       <div className="app-header__actions">
-        {/* The secure-context state is shown, not hidden: without crypto.subtle
-            the key vault cannot operate, and the user deserves to know before
-            they start rather than at the moment a transfer fails. */}
+        {/* Secure context indicator */}
         <span
           className={`badge ${isSecureContext ? 'badge--confirmed' : 'badge--failed'}`}
           title={
             isSecureContext
-              ? 'Web Crypto available — burner keys can be encrypted'
+              ? 'Web Crypto available — burner keys are AES-256-GCM encrypted'
               : 'Insecure origin — open over HTTPS or localhost to enable encrypted keys'
           }
+          style={{ gap: 4 }}
         >
-          {isSecureContext ? `${ICONS.shield} secure` : '⚠ insecure origin'}
+          <Shield
+            size={10}
+            aria-hidden="true"
+            style={{ strokeWidth: 2.5 }}
+          />
+          {isSecureContext ? 'secure' : 'insecure'}
         </span>
 
+        {/* Chain selector */}
         {SUPPORTED_CHAINS.length > 1 && (
-          <>
-            <label className="sr-only" htmlFor="chain-select">
-              Network
-            </label>
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <label className="sr-only" htmlFor="chain-select">Network</label>
             <select
               id="chain-select"
               className="input input--compact"
               value={chain.id}
               onChange={(event) => onSelectChain(Number(event.target.value))}
+              style={{ paddingRight: 28, appearance: 'none', cursor: 'pointer' }}
             >
               {SUPPORTED_CHAINS.map((entry) => (
                 <option key={entry.id} value={entry.id}>
@@ -71,9 +75,20 @@ export function Header({
                 </option>
               ))}
             </select>
-          </>
+            <ChevronDown
+              size={12}
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                right: 10,
+                pointerEvents: 'none',
+                color: 'var(--muted)',
+              }}
+            />
+          </div>
         )}
 
+        {/* Theme toggle */}
         <button
           type="button"
           className="btn btn--icon-square"
@@ -81,16 +96,21 @@ export function Header({
           aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
           title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
         >
-          {theme === 'dark' ? '☀' : '☾'}
+          {theme === 'dark'
+            ? <Sun size={15} aria-hidden="true" />
+            : <Moon size={15} aria-hidden="true" />}
         </button>
 
+        {/* Wallet button */}
         <button
           type="button"
           className={isConnected ? 'btn btn--ghost' : 'btn btn--accent'}
           onClick={onOpenWallet}
+          style={{ gap: 6 }}
         >
+          <Wallet size={13} aria-hidden="true" style={{ flexShrink: 0 }} />
           {isConnected && address !== null
-            ? `${ICONS.wallet} ${shortAddress(address)}`
+            ? shortAddress(address)
             : 'Connect wallet'}
         </button>
       </div>

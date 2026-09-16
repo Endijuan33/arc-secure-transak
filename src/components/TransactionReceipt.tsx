@@ -1,5 +1,5 @@
+import { CheckCircle, AlertTriangle, ExternalLink } from 'lucide-react';
 import type { ChainConfig, TransactionStatus } from '../types';
-import { ICONS } from '../config/constants';
 import { explorerAddressUrl, explorerTxUrl } from '../config/chains';
 import type { TransakResult } from '../services/transak.service';
 
@@ -16,14 +16,6 @@ function shorten(value: string): string {
   return value.length > 20 ? `${value.slice(0, 10)}…${value.slice(-8)}` : value;
 }
 
-/**
- * Post-transfer receipt.
- *
- * Replaces the bare hash link with the facts a user needs to reconcile the
- * transfer independently: what moved, where it went, which block confirmed it,
- * what it cost, and whether the burner was emptied. Every address and hash links
- * to the explorer, so nothing here has to be taken on trust.
- */
 export function TransactionReceipt({
   status,
   chain,
@@ -42,8 +34,10 @@ export function TransactionReceipt({
       aria-label="Transfer receipt"
     >
       <header className="receipt__head">
-        <span className="receipt__icon" aria-hidden="true">
-          {settled ? ICONS.check : ICONS.warning}
+        <span className="receipt__icon">
+          {settled
+            ? <CheckCircle size={18} aria-hidden="true" />
+            : <AlertTriangle size={18} aria-hidden="true" />}
         </span>
         <div style={{ minWidth: 0 }}>
           <strong className="receipt__title">
@@ -64,20 +58,32 @@ export function TransactionReceipt({
               href={explorerAddressUrl(chain, recipient)}
               target="_blank"
               rel="noopener noreferrer"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
             >
               {shorten(recipient)}
+              <ExternalLink size={10} aria-hidden="true" />
             </a>
           </dd>
         </div>
 
         <div className="receipt__cell">
           <dt>Block</dt>
-          <dd className="mono">{result.blockNumber ?? '—'}</dd>
+          <dd
+            className="mono"
+            style={{ fontVariantNumeric: 'tabular-nums' }}
+          >
+            {result.blockNumber ?? '—'}
+          </dd>
         </div>
 
         <div className="receipt__cell">
           <dt>Gas used</dt>
-          <dd className="mono">{result.gasUsed?.toLocaleString() ?? '—'}</dd>
+          <dd
+            className="mono"
+            style={{ fontVariantNumeric: 'tabular-nums' }}
+          >
+            {result.gasUsed?.toLocaleString() ?? '—'}
+          </dd>
         </div>
 
         <div className="receipt__cell">
@@ -93,8 +99,10 @@ export function TransactionReceipt({
               href={explorerAddressUrl(chain, result.burnerAddress)}
               target="_blank"
               rel="noopener noreferrer"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
             >
               {shorten(result.burnerAddress)}
+              <ExternalLink size={10} aria-hidden="true" />
             </a>
             <span className="hint" style={{ display: 'block', marginTop: 2 }}>
               Key destroyed. This address will never be reused.
@@ -110,9 +118,10 @@ export function TransactionReceipt({
               href={explorerTxUrl(chain, result.hash)}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ fontSize: 12 }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12 }}
             >
-              {result.hash} {ICONS.external}
+              {shorten(result.hash)}
+              <ExternalLink size={10} aria-hidden="true" />
             </a>
           </dd>
         </div>
@@ -120,7 +129,14 @@ export function TransactionReceipt({
 
       <p className="receipt__footnote">
         Your wallet never signed a transaction addressed to the recipient. Verify on{' '}
-        {chain.explorer.name} that the only approvals you gave were to the burner above.
+        <a
+          href={explorerAddressUrl(chain, result.burnerAddress)}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {chain.explorer.name}
+        </a>{' '}
+        that the only approvals you gave were to the burner above.
       </p>
     </section>
   );

@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { CheckCircle, XCircle, AlertTriangle, Info, Copy, Check, Loader2, type LucideIcon } from 'lucide-react';
 import type { ActivityLogEntry, NotificationLevel } from '../types';
 
 interface Props {
@@ -8,14 +9,13 @@ interface Props {
 
 type Filter = 'all' | 'milestones' | 'problems';
 
-const LEVEL_GLYPH: Record<NotificationLevel, string> = {
-  success: '✓',
-  error: '✕',
-  warning: '!',
-  info: '·',
+const LEVEL_ICON: Record<NotificationLevel, LucideIcon> = {
+  success: CheckCircle,
+  error: XCircle,
+  warning: AlertTriangle,
+  info: Info,
 };
 
-/** Relative time since the run began, which is what a reader actually wants. */
 function formatElapsed(ms: number): string {
   if (ms < 1000) return `+0.${Math.floor(ms / 100)}s`;
   const seconds = ms / 1000;
@@ -30,17 +30,6 @@ function formatClock(at: number): string {
   });
 }
 
-/**
- * The activity log.
- *
- * Replaces the previous raw `<pre>` dump of `[step] message` lines, which read
- * like debug output. Entries are now structured records, so this renders a
- * timeline: relative timestamp, severity, step name, and message.
- *
- * "Milestones" is the default filter because a full run emits roughly twenty
- * entries, most of them intermediate progress. A user checking what happened
- * wants the ten stage outcomes, not every poll.
- */
 export function ActivityLog({ entries, isRunning }: Props): React.JSX.Element | null {
   const [filter, setFilter] = useState<Filter>('milestones');
   const [copied, setCopied] = useState(false);
@@ -79,12 +68,11 @@ export function ActivityLog({ entries, isRunning }: Props): React.JSX.Element | 
     <section className="panel stack" style={{ gap: 'var(--space-3)' }} aria-label="Activity log">
       <div className="row-between" style={{ flexWrap: 'wrap', rowGap: 'var(--space-2)' }}>
         <span className="row" style={{ gap: 'var(--space-2)' }}>
-          <span className="label" style={{ marginBottom: 0 }}>
-            Activity
-          </span>
+          <span className="label" style={{ marginBottom: 0 }}>Activity</span>
           {isRunning && (
-            <span className="badge badge--pending">
-              <span className="spinner">⟳</span> live
+            <span className="badge badge--pending" style={{ gap: 4 }}>
+              <Loader2 size={9} aria-hidden="true" className="spinner" />
+              live
             </span>
           )}
           {!isRunning && problemCount > 0 && (
@@ -120,11 +108,17 @@ export function ActivityLog({ entries, isRunning }: Props): React.JSX.Element | 
             onClick={() => {
               void navigator.clipboard
                 .writeText(asPlainText())
-                .then(() => setCopied(true))
+                .then(() => {
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                })
                 .catch(() => setCopied(false));
             }}
+            style={{ gap: 4 }}
           >
-            {copied ? 'Copied' : 'Copy'}
+            {copied
+              ? <><Check size={10} aria-hidden="true" /> Copied</>
+              : <><Copy size={10} aria-hidden="true" /> Copy</>}
           </button>
         </div>
       </div>
@@ -135,20 +129,23 @@ export function ActivityLog({ entries, isRunning }: Props): React.JSX.Element | 
         </p>
       ) : (
         <ol className="log" aria-live={isRunning ? 'polite' : 'off'}>
-          {visible.map((entry) => (
-            <li key={entry.id} className={`log__row log__row--${entry.level}`}>
-              <span className="log__time" title={formatClock(entry.at)}>
-                {formatElapsed(entry.elapsedMs)}
-              </span>
-              <span className="log__glyph" aria-hidden="true">
-                {LEVEL_GLYPH[entry.level]}
-              </span>
-              <span className="log__body">
-                <span className="log__step">{entry.stepLabel}</span>
-                <span className="log__message">{entry.message}</span>
-              </span>
-            </li>
-          ))}
+          {visible.map((entry) => {
+            const Icon = LEVEL_ICON[entry.level];
+            return (
+              <li key={entry.id} className={`log__row log__row--${entry.level}`}>
+                <span className="log__time" title={formatClock(entry.at)}>
+                  {formatElapsed(entry.elapsedMs)}
+                </span>
+                <span className="log__glyph" aria-hidden="true">
+                  <Icon size={11} aria-hidden="true" />
+                </span>
+                <span className="log__body">
+                  <span className="log__step">{entry.stepLabel}</span>
+                  <span className="log__message">{entry.message}</span>
+                </span>
+              </li>
+            );
+          })}
         </ol>
       )}
     </section>

@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
+import { CheckCircle, XCircle, AlertTriangle, Info, type LucideIcon } from 'lucide-react';
 import type { NotificationLevel } from '../types';
-import { ICONS } from '../config/constants';
 import { useNotificationStore } from '../store/notificationStore';
 
-const LEVEL_ICON: Record<NotificationLevel, string> = {
-  success: ICONS.check,
-  error: ICONS.error,
-  warning: ICONS.warning,
-  info: ICONS.info,
+const LEVEL_ICON: Record<NotificationLevel, LucideIcon> = {
+  success: CheckCircle,
+  error: XCircle,
+  warning: AlertTriangle,
+  info: Info,
 };
 
 const LEVEL_BORDER: Record<NotificationLevel, string> = {
@@ -18,36 +18,32 @@ const LEVEL_BORDER: Record<NotificationLevel, string> = {
   info: 'var(--info)',
 };
 
-/**
- * Bridges the notification store to react-hot-toast.
- *
- * The store stays the single source of truth so services can notify without a
- * React context, and this component is the only place that knows about the toast
- * library. Each notification is dismissed from the store once handed over, which
- * prevents a re-render from replaying the same toast.
- */
 export function NotificationCenter(): React.JSX.Element {
   const notifications = useNotificationStore((state) => state.notifications);
   const dismiss = useNotificationStore((state) => state.dismiss);
 
   useEffect(() => {
     for (const notification of notifications) {
+      const Icon = LEVEL_ICON[notification.level];
       toast.custom(
         () => (
           <div
             className={`callout callout--${notification.level}`}
             style={{
               maxWidth: 360,
-              borderLeftWidth: 4,
+              borderLeftWidth: 3,
               borderLeftColor: LEVEL_BORDER[notification.level],
+              boxShadow: 'var(--shadow-elevated)',
             }}
             role={notification.level === 'error' ? 'alert' : 'status'}
           >
-            <span className="callout__icon">{LEVEL_ICON[notification.level]}</span>
+            <span className="callout__icon">
+              <Icon size={15} aria-hidden="true" />
+            </span>
             <div style={{ minWidth: 0 }}>
-              <strong style={{ display: 'block' }}>{notification.title}</strong>
+              <strong style={{ display: 'block', fontSize: 13 }}>{notification.title}</strong>
               {notification.message.length > 0 && (
-                <span style={{ fontSize: 13, opacity: 0.9, wordBreak: 'break-word' }}>
+                <span style={{ fontSize: 12, opacity: 0.9, wordBreak: 'break-word', lineHeight: 1.5 }}>
                   {notification.message}
                 </span>
               )}
@@ -60,5 +56,5 @@ export function NotificationCenter(): React.JSX.Element {
     }
   }, [notifications, dismiss]);
 
-  return <Toaster position="top-right" gutter={10} />;
+  return <Toaster position="top-right" gutter={8} />;
 }
