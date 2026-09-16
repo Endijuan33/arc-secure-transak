@@ -1,4 +1,4 @@
-import { Suspense, lazy, useMemo, useState } from 'react';
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
 import { formatUnits } from 'ethers';
 import { SendHorizonal, StopCircle, Image as ImageIcon } from 'lucide-react';
 import type { NftAsset, TokenBalance } from '../types';
@@ -126,6 +126,30 @@ export function TransferPage(): React.JSX.Element {
   }, [draft, wallet.address]);
 
   const gas = useGas(chain, quotableRequest, wallet.address, gasSpeed, { paused: isRunning });
+
+  // ── Auto-switch direction 1: app chain selector → wallet ──────────────────
+  // When the user picks a different network in the Header dropdown, immediately
+  // request the wallet to switch. Skip during an active pipeline so we never
+  // interrupt a mid-flight transfer.
+  const prevChainId = useRef(chain.id);
+  const { isConnected, switchToSelectedChain } = wallet;
+  useEffect(() => {
+    if (prevChainId.current === chain.id) return;
+    prevChainId.current = chain.id;
+    if (!isConnected || isRunning) return;
+    void switchToSelectedChain();
+  }, [chain.id, isConnected, switchToSelectedChain, isRunning]);
+
+  // ── Auto-switch direction 2: wallet chain change → app selector ───────────
+  // When the user switches chains inside their wallet (e.g. MetaMask network
+  // list), sync the app's selected chain to match — but only if the incoming
+  // chain is one we support, and never during an active pipeline.
+  const { walletChainId } = wallet;
+  useEffect(() => {
+    if (walletChainId === null || isRunning) return;
+    if (walletChainId === chain.id) return;
+    setChain(walletChainId); // no-op if walletChainId is not in SUPPORTED_CHAINS
+  }, [walletChainId, chain.id, isRunning, setChain]);
 
   const handleMax = (): void => {
     if (selectedAsset === null) return;
