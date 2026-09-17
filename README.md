@@ -10,9 +10,9 @@ only call that touches the recipient. If the recipient turns out to be hostile, 
 maximum it can take is the amount deliberately placed in the burner — your main
 wallet granted no approval and signed nothing addressed to it.
 
-Built for **Arc Testnet**, with a config-driven chain registry so other EVM
-networks need only a config entry. Verified end to end on-chain across native,
-ERC-20, and ERC-721 transfers.
+Built for **Arc** — Arc Mainnet and Arc Testnet — with a config-driven chain
+registry so other EVM networks need only a config entry. Verified end to end
+on-chain across native, ERC-20, and ERC-721 transfers on both networks.
 
 ---
 
@@ -104,8 +104,9 @@ never destroyed over a balance the app cannot prove is gone.
 - **Native, ERC-20, ERC-721, and ERC-1155 transfers.** NFT standards are confirmed
   via ERC-165 before dispatch.
 - **Kill switch.** Abort at any point; assets are recovered automatically.
-- **Multi-RPC failover.** Five endpoints with rotation, exponential backoff, and
-  jitter. A latency probe promotes the fastest endpoint per session.
+- **Multi-RPC failover.** Five endpoints on Arc Testnet and four on Arc Mainnet,
+  with rotation, exponential backoff, and jitter. A latency probe promotes the
+  fastest endpoint per session.
 - **Gas simulation.** Real estimates with a documented fallback, and the UI says
   when a figure is approximate.
 - **Fee priority.** Standard / Fast / Instant.
@@ -200,6 +201,22 @@ Dependencies point strictly downward: `services/` imports no React,
 
 ---
 
+## Supported networks
+
+| Network     | Chain ID  | Explorer                                           | Native | Known ERC-20 |
+| ----------- | --------- | -------------------------------------------------- | ------ | ------------ |
+| Arc Mainnet | `5042`    | [explorer.arc.io](https://explorer.arc.io)         | USDC   | EURC         |
+| Arc Testnet | `5042002` | [testnet.arcscan.app](https://testnet.arcscan.app) | USDC   | EURC, cirBTC |
+
+**Arc Mainnet launched on 16 September 2026** and is the network selected on first
+load. Arc Testnet remains registered for testing, and the chain selector in the
+header switches between them. cirBTC is listed on testnet only for now — its
+mainnet address is added to `src/config/chains.ts` once officially published. Every
+endpoint is a public gateway used without an API key, which is what the RPC pool's
+rotation and backoff are sized for.
+
+---
+
 ## Adding a chain
 
 One entry in `src/config/chains.ts`:
@@ -223,7 +240,7 @@ const BASE_SEPOLIA: ChainConfig = {
   supportsEip1559: true,
 };
 
-export const SUPPORTED_CHAINS = [ARC_TESTNET, BASE_SEPOLIA];
+export const SUPPORTED_CHAINS = [ARC_TESTNET, ARC_MAINNET, BASE_SEPOLIA];
 ```
 
 The chain selector appears automatically once more than one chain is registered.
@@ -268,9 +285,10 @@ Worth reading before moving anything valuable.
   removing it would risk the sweep being rejected outright.
 - **Rate limiting is per-tab.** A reload resets it. It guards against accidents,
   not adversaries.
-- **Testnet only.** Verified on Arc Testnet across native, ERC-20, and ERC-721
-  transfers. ERC-1155, the mid-transfer abort path, and any other network remain
-  unverified on-chain — see
+- **Partial on-chain coverage.** Arc Mainnet and Arc Testnet are both verified end
+  to end across native, ERC-20, and ERC-721 transfers. ERC-1155, the mid-transfer
+  abort path, and any network outside the Arc registry remain unverified on-chain
+  — see
   [Still not verified](./UPGRADE_REPORT.md#still-not-verified). Test with a small
   amount first.
 
