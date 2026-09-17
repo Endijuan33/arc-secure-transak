@@ -8,7 +8,7 @@
  */
 
 import { useCallback, useMemo } from 'react';
-import type { ChainConfig, NftAsset, TokenBalance, TransferRequest } from '../types';
+import type { ChainConfig, GasEstimate, NftAsset, TokenBalance, TransferRequest } from '../types';
 import { validateAmount, validateRecipient, validateTokenId } from '../security/validation';
 import { useTransferStore } from '../store/transferStore';
 import { useSessionStore } from '../store/sessionStore';
@@ -79,6 +79,16 @@ export function buildTransferRequest(draft: TransferDraft, sender: string | null
   if (!amountCheck.ok) return { ok: false, error: amountCheck.error };
 
   if (asset.kind === 'native') {
+    // NOTE: The max-amount check above is intentionally against the raw balance,
+    // not balance-minus-gas, because `buildTransferRequest` does not receive a
+    // gas estimate. The `handleMax` function in TransferPage already subtracts
+    // the gas reserve from the MAX button path. The actual gas-sufficiency check
+    // runs in the pipeline's preflight step (step 5), which catches any case
+    // where the user typed a value that would leave nothing for fees.
+    //
+    // This comment is here so a future developer does not try to pass fundingWei
+    // into this pure function — doing so would couple validation to an async gas
+    // quote and break the synchronous submit-button-disable path.
     return {
       ok: true,
       request: {
@@ -120,6 +130,8 @@ export function useTransak(
   chain: ChainConfig,
   wallet: WalletConnection,
   draft: TransferDraft,
+  /** Advisory gas estimate from useGas, used to catch "amount leaves nothing for fees" early. */
+  gasEstimate?: GasEstimate | null,
 ): TransakController {
   const gasSpeed = useSessionStore((state) => state.gasSpeed);
   const execute = useTransferStore((state) => state.execute);
@@ -140,13 +152,46 @@ export function useTransak(
     }
     if (isRunning) return 'A transfer is already running.';
     if (!validation.ok) return validation.error;
+
+    // C-4: for native transfers, warn early when the amount typed would leave
+    // insufficient balance to also cover the burner funding (gas). The pipeline
+    // would catch this at preflight anyway, but blocking the submit button
+    // before the user signs anything gives a much better UX.
+    if (
+      validation.request.kind === 'native' &&
+      gasEstimate !== null &&
+      gasEstimate !== undefined &&
+      draft.asset !== null
+    ) {
+      const funding =
+        gasEstimate.gasLimit * gasEstimate.fee.effectiveGasPrice +
+        // sweep reserve: 21000 * effectiveGasPrice
+        21000n * gasEstimate.fee.effectiveGasPrice;
+      const needed = validation.request.amount + funding;
+      if (draft.asset.raw < needed) {
+        return `Amount plus fees exceeds your ${chain.nativeCurrency.symbol} balance. Reduce the amount or wait for the fee estimate to update.`;
+      }
+    }
+
     return null;
-  }, [wallet, chain.name, isRunning, validation]);
+  }, [
+    wallet,
+    chain.name,
+    chain.nativeCurrency.symbol,
+    isRunning,
+    validation,
+    gasEstimate,
+    draft.asset,
+  ]);
+
+  // Destructure stable primitives from wallet so the callback only re-creates
+  // when something that actually changes the transaction changes — not on every
+  // wallet object identity change caused by a re-render.
+  const { signer, browserProvider, address: walletAddress } = wallet;
 
   const submit = useCallback(async () => {
-    const signer = wallet.signer;
-    const provider = wallet.browserProvider;
-    if (!validation.ok || signer === null || provider === null || wallet.address === null) return;
+    if (!validation.ok || signer === null || browserProvider === null || walletAddress === null)
+      return;
 
     const displayAmount =
       validation.request.kind === 'erc721'
@@ -158,13 +203,23 @@ export function useTransak(
     await execute({
       chain,
       signer,
-      walletProvider: provider,
+      walletProvider: browserProvider,
       request: validation.request,
       gasSpeed,
-      sender: wallet.address,
+      sender: walletAddress,
       displayAmount,
     });
-  }, [wallet, validation, execute, chain, gasSpeed, draft.amount, draft.nftAmount]);
+  }, [
+    signer,
+    browserProvider,
+    walletAddress,
+    validation,
+    execute,
+    chain,
+    gasSpeed,
+    draft.amount,
+    draft.nftAmount,
+  ]);
 
   return {
     validation,

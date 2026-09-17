@@ -259,7 +259,11 @@ export const useTransferStore = create<TransferState>((set, get) => ({
         set((state) => ({
           steps: failRemainingSteps(state.steps, message),
           isRunning: false,
-          status: 'pending',
+          // The dispatch succeeded but the sweep/destroy failed: the transfer
+          // itself landed, but we must expose recovery tooling. 'failed' is the
+          // correct status here — 'pending' would re-enable the submit button
+          // and imply the transfer is still in flight.
+          status: 'failed',
           statusMessage: message,
           error: message,
         }));
@@ -313,6 +317,13 @@ export const useTransferStore = create<TransferState>((set, get) => ({
   dismissStranded: () => {
     const stranded = get().stranded;
     if (stranded !== null) destroySession(stranded.handle);
-    set({ stranded: null });
+    // Also clear the error and status indicators left by the RecoveryFailure
+    // path so the UI returns to a clean idle state after dismissal.
+    set({
+      stranded: null,
+      error: null,
+      status: 'idle',
+      statusMessage: 'Ready.',
+    });
   },
 }));

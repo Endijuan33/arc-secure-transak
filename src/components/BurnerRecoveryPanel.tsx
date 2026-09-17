@@ -196,9 +196,18 @@ export function BurnerRecoveryPanel({ chain, recovery }: Props): React.JSX.Eleme
             <span style={{ fontSize: 12, color: 'var(--danger-text)' }}>{recovery.error}</span>
           )}
 
+          {/* N-5: only allow dismiss after the key has been either revealed (and
+              therefore copied) or the user explicitly confirms they understand
+              it will be wiped without being shown. */}
           <button
             type="button"
             className="btn btn--ghost"
+            disabled={recovery.revealedKey === null && !acknowledged}
+            title={
+              recovery.revealedKey === null && !acknowledged
+                ? 'Acknowledge the risk above before wiping the key'
+                : undefined
+            }
             onClick={recovery.dismiss}
             style={{ gap: 4 }}
           >

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { MapPin, BookOpen, CheckCircle, XCircle, Plus, Trash2, Search } from 'lucide-react';
 import type { AddressBookEntry } from '../types';
 import { validateRecipient } from '../security/validation';
@@ -25,6 +25,19 @@ export function DestinationInput({
   const [showBook, setShowBook] = useState(false);
   const [bookQuery, setBookQuery] = useState('');
   const [newTag, setNewTag] = useState('');
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  // M-3: close the bookmark panel when the user clicks outside it.
+  useEffect(() => {
+    if (!showBook) return;
+    const handlePointerDown = (event: PointerEvent): void => {
+      if (panelRef.current !== null && !panelRef.current.contains(event.target as Node)) {
+        setShowBook(false);
+      }
+    };
+    document.addEventListener('pointerdown', handlePointerDown);
+    return () => document.removeEventListener('pointerdown', handlePointerDown);
+  }, [showBook]);
 
   const debouncedRecipient = useDebouncedValue(recipient);
   const debouncedQuery = useDebouncedValue(bookQuery);
@@ -102,7 +115,11 @@ export function DestinationInput({
       </div>
 
       {showBook && (
-        <div className="panel stack" style={{ gap: 'var(--space-3)', marginTop: 'var(--space-3)' }}>
+        <div
+          ref={panelRef}
+          className="panel stack"
+          style={{ gap: 'var(--space-3)', marginTop: 'var(--space-3)' }}
+        >
           {addressBook.length > 0 && (
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
               <Search

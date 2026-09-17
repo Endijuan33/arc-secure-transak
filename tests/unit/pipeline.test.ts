@@ -111,7 +111,10 @@ describe('applyStepEvent', () => {
 });
 
 describe('failRemainingSteps', () => {
-  it('fails only the active step', () => {
+  it('fails the active step and every idle step after it', () => {
+    // C-1 fix: trailing idle steps must also be failed so the progress timeline
+    // shows a complete failure picture rather than leaving later steps looking
+    // as if they never ran.
     let steps = applyStepEvent(createInitialSteps(), 'verify-session', 'done', 'ok', 1000);
     steps = applyStepEvent(steps, 'create-burner', 'start', 'Creating…', 2000);
 
@@ -119,12 +122,19 @@ describe('failRemainingSteps', () => {
 
     expect(failed.find((entry) => entry.id === 'verify-session')?.state).toBe('done');
     expect(failed.find((entry) => entry.id === 'create-burner')?.state).toBe('failed');
-    expect(failed.find((entry) => entry.id === 'sweep-refund')?.state).toBe('idle');
+    // All idle steps after the active step must also be failed.
+    expect(failed.find((entry) => entry.id === 'estimate-gas')?.state).toBe('failed');
+    expect(failed.find((entry) => entry.id === 'sweep-refund')?.state).toBe('failed');
+    expect(failed.find((entry) => entry.id === 'destroy-session')?.state).toBe('failed');
   });
 
-  it('is a no-op when nothing is active', () => {
+  it('fails all idle steps even when nothing was active', () => {
+    // A pipeline that was never started (all idle) should have every step
+    // marked failed — this happens when the pipeline errors before the first
+    // emit, e.g. a pre-flight validation failure with no running step.
     const steps = createInitialSteps();
-    expect(failRemainingSteps(steps, 'boom').every((step) => step.state === 'idle')).toBe(true);
+    const failed = failRemainingSteps(steps, 'boom');
+    expect(failed.every((step) => step.state === 'failed')).toBe(true);
   });
 });
 

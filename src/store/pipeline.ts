@@ -166,9 +166,13 @@ export function failRemainingSteps(
   detail: string,
   now: number = Date.now(),
 ): readonly PipelineStep[] {
-  return steps.map((step) =>
-    step.state === 'active' ? { ...step, state: 'failed', detail, finishedAt: now } : step,
-  );
+  return steps.map((step) => {
+    if (step.state === 'done' || step.state === 'skipped' || step.state === 'failed') return step;
+    // Both the currently active step and every idle step that follows it are
+    // marked failed so the progress timeline shows a complete failure picture
+    // instead of leaving trailing steps looking as if they never ran.
+    return { ...step, state: 'failed', detail, finishedAt: now };
+  });
 }
 
 /** The step currently in flight, or `null` when the pipeline is idle. */

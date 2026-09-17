@@ -80,10 +80,15 @@ export function useHistory(chainId: number, sender: string | null): HistoryState
   const loadMore = useCallback(() => {
     if (cursor === null || isLoading) return;
 
+    let cancelled = false;
+
     const load = async (): Promise<void> => {
       setIsLoading(true);
       try {
         const page = await readHistoryPage(chainId, cursor);
+        // M-6: if the chain changed while this page was in flight, discard the
+        // result — it belongs to the previous chain and would corrupt the list.
+        if (cancelled) return;
         setItems((previous) => {
           // Deduplicate defensively: a concurrent insert between pages could
           // otherwise surface the same row twice.
@@ -95,13 +100,18 @@ export function useHistory(chainId: number, sender: string | null): HistoryState
         setTotal(page.total);
         setError(null);
       } catch (caught: unknown) {
-        setError(toUserMessage(caught));
+        if (!cancelled) setError(toUserMessage(caught));
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     };
 
     void load();
+    // Return a cleanup that marks the in-flight read stale if the caller
+    // unmounts or the chainId changes before the page resolves.
+    return () => {
+      cancelled = true;
+    };
   }, [chainId, cursor, isLoading]);
 
   const clearAll = useCallback(async () => {

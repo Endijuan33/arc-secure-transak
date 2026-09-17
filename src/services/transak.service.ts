@@ -413,14 +413,18 @@ export async function executeSecureTransak(input: TransakInput): Promise<Transak
   const { chain, signer, walletProvider, request, gasSpeed, signal, onEvent } = input;
   const pollIntervalMs = input.receiptPollIntervalMs ?? RECEIPT_POLL_INTERVAL_MS;
 
+  // H-1: currentStep is set here so it is always in scope for onRetry below.
+  let currentStep: PipelineStepId = 'estimate-gas';
+
   const emit = (step: PipelineStepId, phase: PipelineEvent['phase'], detail: string): void => {
+    currentStep = step;
     onEvent({ step, phase, detail });
   };
   const makePool = input.poolFactory ?? createRpcPool;
   const pool = makePool(chain, {
     onRetry: (context: RetryContext) => {
       emit(
-        'estimate-gas',
+        currentStep,
         'progress',
         `Switching to ${context.endpoint.label} after a network hiccup (attempt ${context.attempt}/${context.maxAttempts}).`,
       );

@@ -118,14 +118,15 @@ export function TransferPage(): React.JSX.Element {
     [recipient, amount, mode, selectedAsset, selectedNft, nftAmount],
   );
 
-  const transak = useTransak(chain, wallet, draft);
-
   const quotableRequest = useMemo(() => {
     const built = buildTransferRequest(draft, wallet.address);
     return built.ok ? built.request : null;
   }, [draft, wallet.address]);
 
   const gas = useGas(chain, quotableRequest, wallet.address, gasSpeed, { paused: isRunning });
+
+  // gas must be declared before transak so the gas estimate can be passed in.
+  const transak = useTransak(chain, wallet, draft, gas.estimate);
 
   // ── Auto-switch direction 1: app chain selector → wallet ──────────────────
   // When the user picks a different network in the Header dropdown, immediately
@@ -150,6 +151,30 @@ export function TransferPage(): React.JSX.Element {
     if (walletChainId === chain.id) return;
     setChain(walletChainId); // no-op if walletChainId is not in SUPPORTED_CHAINS
   }, [walletChainId, chain.id, isRunning, setChain]);
+
+  // ── M-1: Invalidate balance cache immediately on chain switch ─────────────
+  // useBalances caches results for BALANCE_CACHE_TTL_MS (15s). When the user
+  // switches networks the cached balances belong to the previous chain and will
+  // show for up to 15s before the interval fires. Calling refresh() on chain
+  // change zeroes the TTL guard so the next render triggers an immediate fetch.
+  const prevChainIdForBalance = useRef(chain.id);
+  useEffect(() => {
+    if (prevChainIdForBalance.current === chain.id) return;
+    prevChainIdForBalance.current = chain.id;
+    balances.refresh();
+  }, [chain.id, balances.refresh]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── N-4: Refresh NFT list after a successful transfer ─────────────────────
+  // The pipeline does not notify useNfts when a token moves. After a confirmed
+  // transfer the list should reload so the transferred NFT disappears.
+  const prevStatus = useRef(status);
+  useEffect(() => {
+    const wasRunning = prevStatus.current === 'pending';
+    prevStatus.current = status;
+    if (wasRunning && status === 'confirmed' && mode === 'nft') {
+      nfts.refresh();
+    }
+  }, [status, mode, nfts.refresh]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleMax = (): void => {
     if (selectedAsset === null) return;
